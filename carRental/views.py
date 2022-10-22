@@ -5,6 +5,8 @@ from rest_framework import generics
 from django.contrib.auth.models import User
 from rest_framework import permissions
 from carRental.permissions import IsOwnerOrReadOnly
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
 
 class UserList(generics.ListAPIView):
@@ -24,6 +26,9 @@ class CarCompanyList(generics.ListCreateAPIView):
     queryset = RentalCompany.objects.all()
     serializer_class = CarRentalSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
+    filter_fields = ('companyName', 'companyAddress', 'companyPhoneNumber')
+    search_fields = ('companyName', 'companyAddress', 'companyPhoneNumber')
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -42,6 +47,9 @@ class CarList (generics.ListCreateAPIView):
     queryset = Car.objects.all()
     serializer_class = CarSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
+    filter_fields = ('carModel', 'manufacturer', 'type')
+    search_fields = ('carModel', 'manufacturer', 'type')
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -58,6 +66,8 @@ class ManufacturerList (generics.ListCreateAPIView):
     queryset = Manufacturer.objects.all()
     serializer_class = ManufacturerSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ('manufacturerName',)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
