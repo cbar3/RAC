@@ -14,6 +14,12 @@ urlpatterns = [
     path('car/<int:pk>', views.CarDetail.as_view()),
     path('carManufacturer/', views.ManufacturerList.as_view()),
     path('carManufacturer/<int:pk>', views.ManufacturerDetail.as_view()),
+    path('Rental/', views.RentalList.as_view()),
+    path('Rental/<int:pk>', views.RentalDetail.as_view()),
+    path('Costumer/', views.CustomerList.as_view()),
+    path('Costumer/<int:pk>', views.CustomerDetail.as_view()),
+    path('PlaceToStart/', views.PlaceToStartList.as_view()),
+    path('PlaceToStart/<int:pk>', views.PlaceToStartDetail.as_view()),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)
 

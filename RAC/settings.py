@@ -28,6 +28,11 @@ DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
 
 
+# Application definition
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+}
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,12 +46,6 @@ INSTALLED_APPS = [
     'django_filters',
     # 'advanced_filters',
 ]
-
-REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': (
-        'django_filters.rest_framework.DjangoFilterBackend',
-    ),
-}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

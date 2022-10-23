@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from phonenumber_field.serializerfields import PhoneNumberField
-from carRental.models import RentalCompany, Car, Manufacturer
+from carRental.models import RentalCompany, Car, Manufacturer, Costumer, PlaceToStart, Rental
 from django.contrib.auth.models import User
 
 
@@ -10,7 +9,7 @@ class CarRentalSerializer (serializers.ModelSerializer):
     class Meta:
         model = RentalCompany
         fields = ['id', 'companyName', 'companyAddress', 'companyPhoneNumber', 'companyEmail', 'owner', 'car',
-                  'companyLogo']
+                  'companyLogo', 'costumer', 'placeToStart']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -39,5 +38,27 @@ class ManufacturerSerializer (serializers.ModelSerializer):
         fields = ['id', 'manufacturerName', 'manufacturerLogo', 'owner']
 
 
+class CostumerSerializer (serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+
+    class Meta:
+        model = Costumer
+        fields = ['id', 'costumerFirstName', 'costumerLastName', 'costumerEmail', 'costumerPhoneNumber',
+                  'costumerAFM', 'owner']
 
 
+class PlaceToStartSerializer (serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+
+    class Meta:
+        model = PlaceToStart
+        fields = ['id', 'placeToStart', 'owner']
+
+
+class RentalSerializer (serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+
+    class Meta:
+        model = Rental
+        fields = ['id', 'costumer', 'rentalCompany', 'car', 'startDate', 'finishDate', 'placeToStart',
+                  'owner']
