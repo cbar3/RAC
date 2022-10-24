@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html><html lang="en">
+<head>
+    <!--ο τίτλος που εμφανίζεται στο tab της εφαρμογής στον browser-->
+    <title>RENT A CAR</title>
+    <!--link για το css, bootstrap και fonts-->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body class="body">
+<div class="page-header">
+    <!--Το λογότυπο για τον τίτλο-->
+    <h1><a href="/"><img src="{% static 'media/six-rent-a-car.jpg' %}" alt="" width="50%"></a></h1>
+</div>
+<div>
+    <!--Η γραμμή πλοήγησης-->
+    <ul>
+        <li><a class="active" href='/'>Home</a></li>
+        <li><a>Episodes</a></li>
+        <li><a>Actors</a></li>
+        <li><a>Directors</a></li>
+        <li style="float:right"><a>About us</a></li>
+        <li style="float:right">
+            <!--Η φόρμα της αναζήτησης-->
+            <form type="get" action=".">
+                <input style="color: black" type="text" name="txt" placeholder="Αναζήτηση..">
+                <input style="color: black"  type="submit" value="Search">
+            </form>
+        </li>
+    </ul>
+</div>
+
+<div class="col-md-12">
+        {% block content %}
+
+        {% endblock %}
+</div>
+
+</body>
+</html>

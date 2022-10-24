@@ -1,0 +1,17 @@
+{% extends 'rental/home.html' %}
+{% load static %}
+{% block content %}
+    <!--Μια for που ψάχνει τα αποτελέσματα του view -->
+     {% for car in cars %}
+    <div>
+        <p>Model: {{ car.carModel }}</p>
+        <p>Type: {{ car.type }}</p>
+        <p>transmission: {{ car.transmission }}</p>
+        <p>
+            {% if car.carImage %} <img src="{{ car.carImage.url}}" alt=""/> {% endif %}
+        </p>
+    </div>
+    {% endfor %}
+{% endblock content %}
+
+

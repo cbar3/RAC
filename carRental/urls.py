@@ -6,6 +6,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('', views.car, name='car_list'),
     path('carRentalCompany/', views.CarCompanyList.as_view()),
     path('carRentalCompany/<int:pk>', views.CarCompanyDetail.as_view()),
     path('users/', views.UserList.as_view()),

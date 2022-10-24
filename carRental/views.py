@@ -8,6 +8,7 @@ from rest_framework import permissions
 from carRental.permissions import IsOwnerOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from django.shortcuts import render, get_object_or_404
 
 
 class UserList(generics.ListAPIView):
@@ -27,9 +28,10 @@ class CarCompanyList(generics.ListCreateAPIView):
     queryset = RentalCompany.objects.all()
     serializer_class = CarRentalSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
-    filter_fields = ('companyName', 'companyAddress', 'companyPhoneNumber', 'companyEmail')
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_fields = ('Name', 'Address', 'Phone Number', 'Email')
     search_fields = ('companyName', 'companyAddress', 'companyPhoneNumber', 'companyEmail')
+    ordering_fields = ('companyName', 'companyAddress', 'companyPhoneNumber', 'companyEmail')
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -48,7 +50,7 @@ class CarList (generics.ListCreateAPIView):
     queryset = Car.objects.all()
     serializer_class = CarSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
     filter_fields = ('carModel', 'manufacturer', 'type')
     search_fields = ('carModel', 'manufacturer', 'type')
 
@@ -67,7 +69,7 @@ class ManufacturerList (generics.ListCreateAPIView):
     queryset = Manufacturer.objects.all()
     serializer_class = ManufacturerSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
     filter_fields = ('manufacturerName',)
 
     def perform_create(self, serializer):
@@ -85,7 +87,7 @@ class CustomerList (generics.ListCreateAPIView):
     queryset = Costumer.objects.all()
     serializer_class = CostumerSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
     filter_fields = ('costumerFirstName', 'costumerLastName', 'costumerEmail', 'costumerPhoneNumber',
                      'costumerAFM')
 
@@ -103,7 +105,7 @@ class RentalList(generics.ListCreateAPIView):
     queryset = Rental.objects.all()
     serializer_class = RentalSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
     filter_fields = ('costumer', 'rentalCompany', 'car', 'startDate', 'finishDate'
                      'placeToStart')
 
@@ -121,7 +123,7 @@ class PlaceToStartList(generics.ListCreateAPIView):
     queryset = PlaceToStart.objects.all()
     serializer_class = PlaceToStartSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
     filter_fields = ('placeToStart',)
 
     def perform_create(self, serializer):
@@ -132,3 +134,8 @@ class PlaceToStartDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = PlaceToStart.objects.all()
     serializer_class = PlaceToStartSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+
+def car(request):
+    cars = Car.objects.all().order_by('carModel')
+    return render(request, 'rental/carlist.html', {'cars': cars})
