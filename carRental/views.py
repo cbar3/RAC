@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate, login, logout
 from carRental.models import RentalCompany, Car, Manufacturer, Rental, Costumer, PlaceToStart
 from carRental.serializers import CarRentalSerializer, CarSerializer, ManufacturerSerializer, RentalSerializer, \
     CostumerSerializer, PlaceToStartSerializer
@@ -8,7 +9,7 @@ from rest_framework import permissions
 from carRental.permissions import IsOwnerOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
 
 class UserList(generics.ListAPIView):
@@ -136,6 +137,6 @@ class PlaceToStartDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
-def car(request):
+def home(request):
     cars = Car.objects.all().order_by('carModel')
-    return render(request, 'rental/carlist.html', {'cars': cars})
+    return render(request, 'carlist.html', {'cars': cars})

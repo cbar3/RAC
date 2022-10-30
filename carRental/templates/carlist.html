@@ -1,6 +1,6 @@
-{% extends 'rental/home.html' %}
+{% extends 'home.html' %}
 {% load static %}
-{% block content %}
+{% block carlist %}
     <!--Μια for που ψάχνει τα αποτελέσματα του view -->
      {% for car in cars %}
     <div>
@@ -12,6 +12,4 @@
         </p>
     </div>
     {% endfor %}
-{% endblock content %}
-
-
+{% endblock carlist %}
