@@ -140,3 +140,19 @@ class PlaceToStartDetail(generics.RetrieveUpdateDestroyAPIView):
 def home(request):
     cars = Car.objects.all().order_by('carModel')[:12]
     return render(request, 'home.html', {'cars': cars})
+
+
+def carlist(request):
+    cars = Car.objects.all().order_by('carModel')
+    return render(request, 'carlist.html', {'cars': cars})
+
+
+def cardetail(request, pk):
+    cars = get_object_or_404(Car, pk=pk)
+    carRelated = Car.objects.all().order_by('carModel')[:4]
+
+    context = {'cars': cars,
+               'carRelated': carRelated}
+    return render(request, 'cardetails.html', context)
+
+
