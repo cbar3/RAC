@@ -1,6 +1,8 @@
 {% extends 'main.html' %}
 {% load static  %}
 {% block content %}
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <!-- Product section-->
         <section class="py-5">
             <div class="container px-4 px-lg-5 my-5">
@@ -10,21 +12,67 @@
                     </div>
                     <div class="col-md-6">
                         <div class="small mb-1">
-                           <p>{{ cars.manufacturer }}</p>
+                           <h1>{{ cars.manufacturer }}</h1>
                         </div>
                         <h1><a href="{% url 'rental' pk=cars.pk %}">{{ cars.carModel }}</a></h1>
                         <div class="fs-5 mb-5">
-                            <span class="text-decoration-line-through">$45.00</span>
-                            <span>$40.00</span>
+                            <span class="text-decoration-line-through">Απο 45,00 €</span>
+                            <span>Τώρα 40,00 €</span>
                         </div>
-                        <p class="lead">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium at dolorem quidem modi. Nam sequi consequatur obcaecati excepturi alias magni, accusamus eius blanditiis delectus ipsam minima ea iste laborum vero?</p>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                                <div class="reserveMobile">
+                                    <a href="#" class="btn btn-sm animated-button thar-three">Book this car</a>
+                                </div>
+                                <div class="contactCar">
+                                    <i class="fas fa-paper-plane"></i> <span class="textCar"><i>CONTACT US</i></span>
+                                </div>
+                                <form id="contact-form" class="form" action="#" method="POST" role="form">
+                                    {% csrf_token  %}
+                                    <div class="form-group">
+
+                                        <input type="text" class="form-control"  name="name" placeholder="Όνοματεπώνυμο" tabindex="1" required>
+                                    </div>
+                                    <div class="form-group">
+
+                                        <input type="email" class="form-control"  name="email" placeholder="Email επικοινωνίας" tabindex="2" required>
+                                    </div>
+                                    <div class="form-group">
+
+                                        <input type="text" class="form-control" name="number" placeholder="Τηλέφωνο επικοινωνίας" tabindex="3">
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea rows="2" cols="10" name="message" class="form-control textareaCar" id="message" placeholder="Γράψτε το μήνυμα σας εδώ" tabindex="4" required></textarea>
+                                    </div>
+                                    <div class="text-center">
+                                        <button id='buttonSendCar' type="submit" class="btn btn-start-order ">Send </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    {% if user.is_authenticated  %}
+                                    <div class="buttonCar">
+                                        <a href="{% url 'rental' pk=cars.id %}" class="btn btn-sm animated-button thar-three">Κάνε κράτηση τώρα</a>
+                                    </div>
+                                    {% else  %}
+                                    <div class="buttonCar">
+                                        <a href='' class="btn btn-sm animated-button thar-three">Κανε κρατηση τωρα</a>
+                                    </div>
+                                    {% endif %}
+                            </div>
+                        </div>
+                        <!--<p class="lead">Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Praesentium at dolorem quidem modi. Nam sequi consequatur obcaecati excepturi alias magni,
+                        accusamus eius blanditiis delectus ipsam minima ea iste laborum vero?</p>
                         <div class="d-flex">
                             <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />
                             <button class="btn btn-outline-dark flex-shrink-0" type="button">
                                 <i class="bi-cart-fill me-1"></i>
                                 Κάνε μια κράτηση
                             </button>
-                        </div>
+                        </div>-->
                     </div>
                 </div>
             </div>
@@ -33,7 +81,7 @@
              <!-- Section-->
         <section class="py-5 bg-light">
             <div class="container px-4 px-lg-5 mt-5">
-                <h2 class="fw-bolder mb-4">Related products</h2>
+                <h2 class="fw-bolder mb-4">Άλλες προτάσεις για εσάς</h2>
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     {% for car in carRelated %}
                     <div class="col mb-5">

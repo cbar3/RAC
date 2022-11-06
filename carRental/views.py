@@ -12,7 +12,7 @@ from rest_framework import filters
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from .forms import RegisterForm
-
+from django.contrib.auth.decorators import login_required
 
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
@@ -169,7 +169,7 @@ def user_login(request):
             # Save session as cookie to login the user
             login(request, user)
             # Success, now let's login the user.
-            return render(request, 'account.html')
+            return render(request, 'home.html')
         else:
             # Incorrect credentials, let's throw an error to the screen.
             return render(request, 'login.html', {'error_message': 'Incorrect username and / or password.'})
@@ -228,3 +228,7 @@ def user_register(request):
     return render(request, template, {'form': form})
 
 
+@login_required(login_url='home.html')
+def logout_view(request):
+    logout(request)
+    return redirect('home')
