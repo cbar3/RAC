@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from phonenumber_field.modelfields import PhoneNumberField, PhoneNumber
 
 TYPE_CHOICES = [('MINI', 'mini'), ('Medium', 'medium'), ('MID_RANGE', 'mid-range'), ('SEDAN', 'sedan'), ('SUV', 'suv')]
@@ -22,6 +23,7 @@ class RentalCompany (models.Model):
 
 
 class Costumer(models.Model):
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     costumerFirstName = models.CharField(max_length=80, null=False, default='')
     costumerLastName = models.CharField(max_length=80, null=False, default='')
     costumerEmail = models.EmailField(max_length=254, null=False, default='')
