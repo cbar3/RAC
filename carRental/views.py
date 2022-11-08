@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
-from carRental.models import RentalCompany, Car, Manufacturer, Rental, Costumer, PlaceToStart
+from carRental.models import RentalCompany, Car, Manufacturer, Rental, Costumer, PlaceToStart, Extras
 from carRental.serializers import CarRentalSerializer, CarSerializer, ManufacturerSerializer, RentalSerializer, \
     CostumerSerializer, PlaceToStartSerializer
 from carRental.serializers import UserSerializer
@@ -13,6 +13,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from .forms import RegisterForm
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from datetime import datetime, timedelta, date
+from json import dumps
+
 
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
@@ -46,7 +50,7 @@ class CarCompanyDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
-class CarList (generics.ListCreateAPIView):
+class CarList(generics.ListCreateAPIView):
     """
     Returns a List of all cars
     """
@@ -67,8 +71,7 @@ class CarDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
-class ManufacturerList (generics.ListCreateAPIView):
-
+class ManufacturerList(generics.ListCreateAPIView):
     queryset = Manufacturer.objects.all()
     serializer_class = ManufacturerSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -79,14 +82,13 @@ class ManufacturerList (generics.ListCreateAPIView):
         serializer.save(owner=self.request.user)
 
 
-class ManufacturerDetail (generics.RetrieveUpdateDestroyAPIView):
+class ManufacturerDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Manufacturer.objects.all()
     serializer_class = ManufacturerSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
-class CustomerList (generics.ListCreateAPIView):
-
+class CustomerList(generics.ListCreateAPIView):
     queryset = Costumer.objects.all()
     serializer_class = CostumerSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -98,7 +100,7 @@ class CustomerList (generics.ListCreateAPIView):
         serializer.save(owner=self.request.user)
 
 
-class CustomerDetail (generics.RetrieveUpdateDestroyAPIView):
+class CustomerDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Costumer.objects.all()
     serializer_class = CostumerSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
@@ -110,7 +112,7 @@ class RentalList(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
     filter_fields = ('costumer', 'rentalCompany', 'car', 'startDate', 'finishDate'
-                     'placeToStart')
+                                                                      'placeToStart')
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -152,6 +154,17 @@ def carlist(request):
 def cardetail(request, pk):
     cars = get_object_or_404(Car, pk=pk)
     carRelated = Car.objects.all().order_by('carModel')[:4]
+    if request.method == 'POST':
+        message_name = request.POST['name'] + ' ' + " " + request.POST['number']
+        message_email = request.POST['email']
+        message = request.POST['message']
+        send_mail(
+            message_name,
+            message,
+            message_email,
+            ['c.barbas@oustrias.gr'],
+            fail_silently=False
+        )
 
     context = {'cars': cars,
                'carRelated': carRelated}
@@ -232,3 +245,118 @@ def user_register(request):
 def logout_view(request):
     logout(request)
     return redirect('home')
+
+
+@login_required(login_url='home.html')
+def createRental(request, pk):
+    dataHolder = []
+    dataClean = []
+    current = request.user
+    carData = Car.objects.get(id=pk)
+    pickupPlace = PlaceToStart.objects.all()
+    rawData = Rental.objects.filter(carId=pk)
+    priceOfAddi = Extras.objects.last()
+
+    # making a list of blocked days for date picker
+    for x in rawData:
+        if x.finishDate > datetime.now().date():
+            srtDate = x.startDate
+            endDate = x.finishDate
+            delta = endDate - srtDate
+            dataHolder = [(srtDate + timedelta(days=i)) for i in range(delta.days + 1)]
+
+    dataClean = [x.strftime("%m/%d/%Y") for x in dataHolder]
+    dataClean = dumps(dataClean)
+
+    context = {
+        'current': current,
+        'carData': carData,
+        'dataClean': dataClean,
+        'pickupPlace': pickupPlace,
+        'priceOfAddi': priceOfAddi
+    }
+    return render(request, 'rental.html', context, )
+
+
+@login_required(login_url='home.html')
+def order(request, pk):
+    car = Car.objects.get(id=pk)
+    startDate = request.POST['startDate']
+    endDate = request.POST['endDate']
+    current = request.user
+
+    format = "%Y/%m/%d"
+    if (request.method == 'POST' and endDate > startDate):
+        additions = 0
+        priceOfAddi = Additions.objects.last()
+        sdate = datetime.strptime(startDate, format)
+        edate = datetime.strptime(endDate, format)
+        daysTotal = edate - sdate
+        days = int(daysTotal.days)
+        place = Location.objects.get(id=request.POST['pickUpPlace'])
+        fuel = request.POST.get('fuel', '') == 'on'
+        insurance = request.POST.get('insurance', '') == 'on'
+
+        if ('fuel' in request.POST and 'insurance' in request.POST):
+            additions = priceOfAddi.insurance + priceOfAddi.fuel
+        elif 'fuel' in request.POST:
+            additions = priceOfAddi.fuel
+        elif 'insurance' in request.POST:
+            additions = priceOfAddi.insurance
+        priceTotal = (int(car.price) * days + additions)
+
+        addingToBase = Order(customer=current, customerID=current.id, carModel=car.model, automobileId=car.id,
+                             price=priceTotal, startRent=sdate, endRent=edate, pickUp=place, fullFuel=fuel,
+                             insurance=insurance)
+        addingToBase.save()
+        currentOrder = addingToBase.id
+
+    context = {
+        'car': car,
+        'fuel': fuel,
+        'place': place,
+        'endDate': endDate,
+        'current': current,
+        'insurance': insurance,
+        'startDate': startDate,
+        'priceTotal': priceTotal,
+        'currentOrder': currentOrder,
+    }
+    return render(request, 'confir.html', context, )
+
+
+@login_required(login_url='home.html')
+def payment(request, pk):
+    current = request.user
+    phoneAuth = request.POST['phoneCardAuth']
+    emailAuth = request.POST['emailCardAuth']
+    databaseOrder = Order.objects.get(id=pk)
+    pricePennies = (databaseOrder.price * 100)
+
+    if (request.method == 'POST' and phoneAuth == current.customer.phone and emailAuth == current.customer.email):
+        customer = stripe.Customer.create(
+
+            email=current.customer.email,
+            phone=current.customer.phone,
+            description=databaseOrder.customerID,
+            source=request.POST['stripeToken']
+        )
+        charge = stripe.Charge.create(
+            customer=customer,
+            amount=pricePennies,
+            currency='usd',
+            description=pk
+        )
+        context = {}
+        return render(request, 'succes.html', context, )
+    else:
+        return redirect('confir.html')
+
+
+@login_required(login_url='home.html')
+def cancelOrder(request, pk):
+    order = Order.objects.get(id=pk)
+    orderForCancel = canceledOrders(payed=order.payed, customerID=order.customerID, price=order.price,
+                                    automobileId=order.automobileId)
+    orderForCancel.save()
+    order.delete()

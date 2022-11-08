@@ -1,0 +1,280 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<form class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="linkRent">
+                <a class="backLinkCustomer" href="{% url 'home'  %}">
+                    <i class="fas fa-arrow-circle-left customerArrow"></i>
+                    <span class="backTextCustomer">Back to home</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <form action="{% url 'order' pk=carData.pk  %}" method="POST">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <div class="conUserData">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="tileTitle">
+                                Στοιχεία ενοικίασης
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="textUserData">
+                                Όνομα Χρήστη:
+                            </div>
+                        </div>
+                        <div class="col-7">
+                            <div class="UserData">
+                                <label>
+                                    <input class="readOnlyForm" value=" {{current.username}}" readonly name='user'>
+                                </label></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="textUserData">
+                                Email Επικοινωνίας:
+                            </div>
+                        </div>
+                        <div class="col-7">
+                            <div class="UserData">
+
+                                <label>
+                                    <input class="readOnlyForm" value="{{ current.email}}" readonly name='mail'>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="textUserData">
+                                Όχημα:
+                            </div>
+                        </div>
+                        <div class="col-7">
+                            <div class="UserData">
+                                <label>
+                                    <input class="readOnlyForm" value=" {{ carData.carModel  }}" readonly name='carModel'>
+                                </label>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="textUserData">
+                                Τιμή ανα ημέρα:
+                            </div>
+                        </div>
+                        <div class="col-7">
+                            <div class="UserData" id='priceField'>
+                                {{ carData.price }}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="conDateData">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="tileTitle">
+                                Ημερομηνία Ενοικίασης
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="textUserData">
+                                Ημερομηνία Παραλαβής:
+                            </div>
+                        </div>
+                        <div class="col-7">
+
+                            <label>
+                                <input type="text" class="dateSelect startDateJq " required="required" name='startDate' />
+                            </label>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="textUserData">
+                                Ημερομηνία παράδοσης:
+                            </div>
+                        </div>
+                        <div class="col-7">
+
+                            <label>
+                                <input type="text" class="dateSelect  endDateJq" required="required" name='endDate' />
+                            </label>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="textUserData">
+                                Σημείο Παραλαβής:
+                            </div>
+                        </div>
+                        <div class="col-7">
+                            <select name="pickUpPlace" id="" class="pickUpPlace">
+                                {% for i in pickupPlace  %}
+                                <option value="{{  i.pk  }}">{{ i.placeToStart  }}</option>
+                                {% endfor  %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <div class="conDateData">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="tileTitle">
+                                Επιπλέον Επιλογές
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="textUserData">
+
+                                Γεμάτο Ρεζερβουάρ:
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="UserData">
+                                <input class="tgl tgl-flat fuel" id="cb1" type="checkbox" name="fuel" />
+                                <label class="tgl-btn" for="cb1"></label>
+                            </div>
+                        </div>
+                        <div class="col-5">
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="textUserData">
+                                Μικτή Ασφάλεια:
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="UserData">
+                                <input class="tgl tgl-flat insurance " id="cb2" type="checkbox" name="insurance" />
+                                <label class="tgl-btn" for="cb2"></label>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="insuranceText">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="textUserData">
+                                Συνολικό κόστος:
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="UserData">
+                                <div class="priceTotal">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="UserData">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="conDateData">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="tileTitle">
+                                Επιβεβαίωση παραγγελίας
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="infoRenting">
+                               Ελέγξτε τα στοιχεία που δώσατε και προχωρήστε στην επιβεβαίωση της κράτησης .
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="col-md-4 col-4"></div>
+                        <div class="col-md-4  col-4" >
+                            <div class="orderButton">
+                                <button type='submit' class="raise">ΚΡΑΤΗΣΗ</button>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</form>
+
+<script>
+    var data            = JSON.parse("{{dataClean|escapejs}}"); 
+    var currentDate     = new Date();
+    var currentPrice    = $('#priceField').text();
+      // we are taking this price in unsafe way because we don't use this data to calculate the price in the backend
+    var fuel            = {{priceOfAddi.fuel}};
+    var insurance       = {{priceOfAddi.insurance}};
+  
+
+    $('.dateSelect').datepicker({
+        format: 'mm/dd/yyyy',
+        autoClose:true,
+        datesDisabled:data,
+        startDate: currentDate ,
+    });
+    $('.dateSelect').datepicker()
+    .on('changeDate', function() {
+        var startDate   = new Date($(".startDateJq").val());
+        var endDate     = new Date($(".endDateJq").val());
+        var diffDate    = (endDate  - startDate) / (1000 * 60 * 60 * 24);
+        var days        = Math.round(diffDate);
+        console.log(days)
+        var price       = (currentPrice * days)
+        $(".priceTotal").html(price);
+
+        $(".insurance, .fuel").on('change',function(){
+            if(  $(".insurance").is(':checked') &&  $(".fuel").is(':checked') ){
+                $(".priceTotal").html(price+insurance+fuel)
+                
+            }else if(  $(".insurance").is(':checked') &&  !($(".fuel").is('unchecked')) ){
+                $(".priceTotal").html(price+insurance)
+
+            }else if(  !($(".insurance").is('unchecked')) &&  $(".fuel").is(':checked') ){
+                $(".priceTotal").html(price+fuel)
+                $(".insuranceText").toggle();
+            }
+            else if(  !($(".insurance").is('unchecked')) &&  !($(".fuel").is('unchecked')) ){
+                $(".priceTotal").html(price)
+            }
+        });
+    });
+</script>
+{% endblock %}

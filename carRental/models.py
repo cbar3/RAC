@@ -41,6 +41,9 @@ class Car (models.Model):
     transmission = models.CharField(choices=TRANSMISSION_CHOICES, default='', max_length=15)
     carImage = models.ImageField(null=True)
     owner = models.ForeignKey('auth.User', related_name='car', on_delete=models.CASCADE, null=True)
+    price = models.CharField(max_length=10, null=True, blank=True)
+    insurance = models.IntegerField(null=True, blank=True)
+    tank = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.carModel
@@ -63,12 +66,35 @@ class Manufacturer(models.Model):
 
 
 class Rental(models.Model):
-    costumer = models.ForeignKey('Costumer', null=True, on_delete=models.CASCADE)
-    rentalCompany = models.ForeignKey('RentalCompany', null=True, on_delete=models.CASCADE)
-    car = models.ForeignKey('Car', null=True, on_delete=models.CASCADE)
-    startDate = models.DateField()
-    finishDate = models.DateField()
-    placeToStart = models.ForeignKey('PlaceToStart', null=True, on_delete=models.CASCADE)
+    costumer = models.ForeignKey(Costumer, null=True, on_delete=models.CASCADE)
+    costumerID = models.CharField(max_length=50, null=True)
+    rentalCompany = models.ForeignKey(RentalCompany, null=True, on_delete=models.CASCADE)
+    car = models.ForeignKey(Car, null=True, on_delete=models.CASCADE)
+    carId = models.CharField(null=True, max_length=10)
+    price = models.IntegerField(null=True, blank=False)
+    startDate = models.DateField(auto_now_add=False, null=True)
+    finishDate = models.DateField(auto_now_add=False, null=True)
+    orderDate = models.DateTimeField(auto_now_add=True, null=True)
+    placeToStart = models.ForeignKey(PlaceToStart, null=True, on_delete=models.CASCADE)
+    fullFuel = models.BooleanField(blank=True, null=True, default=False)
+    insurance = models.BooleanField(blank=True, null=True, default=False)
+    payed = models.BooleanField(null=True, default=False)
 
     def __str__(self):
-        return self.costumer
+        return self.id
+
+
+class Extras(models.Model):
+    name = models.CharField(max_length=105, null=False)
+    insurance = models.IntegerField(null=True, blank=True)
+    fuel = models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class CanceledOrders(models.Model):
+    customerID = models.CharField(max_length=50, null=True)
+    automobileId = models.CharField(null=True, max_length=10)
+    price = models.IntegerField(null=True, blank=False)
+    payed = models.BooleanField(null=True, default=False)

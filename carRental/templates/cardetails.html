@@ -54,7 +54,7 @@
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     {% if user.is_authenticated  %}
                                     <div class="buttonCar">
-                                        <a href="{% url 'rental' pk=cars.id %}" class="btn btn-sm animated-button thar-three">Κάνε κράτηση τώρα</a>
+                                        <a href="{% url 'createRental' pk=cars.id %}" class="btn btn-sm animated-button thar-three">Κάνε κράτηση τώρα</a>
                                     </div>
                                     {% else  %}
                                     <div class="buttonCar">

@@ -12,6 +12,8 @@ urlpatterns = [
     path('login/', views.user_login, name='login'),
     path('register/', views.user_register, name='register'),
     path('logout/', views.logout_view, name='logout'),
+    path('createRental/<str:pk>/', views.createRental, name='createRental'),
+    path('order/<str:pk>/', views.order, name='order'),
 
 
     path('carRentalCompany/', views.CarCompanyList.as_view()),
