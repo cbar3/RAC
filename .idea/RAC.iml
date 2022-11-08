@@ -23,6 +23,14 @@
     <orderEntry type="library" name="jquery-3.5.1" level="application" />
     <orderEntry type="library" name="popper.js" level="application" />
     <orderEntry type="library" name="bootstrap-icons" level="application" />
+    <orderEntry type="library" name="bootstrap-icons" level="application" />
+    <orderEntry type="library" name="Chart.js" level="application" />
+    <orderEntry type="library" name="jquery-3.5.1" level="application" />
+    <orderEntry type="library" name="moment.js" level="application" />
+    <orderEntry type="library" name="bootstrap-datepicker" level="application" />
+    <orderEntry type="library" name="88703e40b7" level="application" />
+    <orderEntry type="library" name="e3ec2c4683" level="application" />
+    <orderEntry type="library" name="popper.js" level="application" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />

@@ -232,7 +232,7 @@ def user_register(request):
                 login(request, user)
 
                 # redirect to accounts page:
-                return HttpResponseRedirect('account')
+                return HttpResponseRedirect('registerHome')
 
     # No post data availabe, let's just show the page.
     else:
@@ -288,12 +288,12 @@ def order(request, pk):
     format = "%Y/%m/%d"
     if (request.method == 'POST' and endDate > startDate):
         additions = 0
-        priceOfAddi = Additions.objects.last()
+        priceOfAddi = Extras.objects.last()
         sdate = datetime.strptime(startDate, format)
         edate = datetime.strptime(endDate, format)
         daysTotal = edate - sdate
         days = int(daysTotal.days)
-        place = Location.objects.get(id=request.POST['pickUpPlace'])
+        place = PlaceToStart.objects.get(id=request.POST['pickUpPlace'])
         fuel = request.POST.get('fuel', '') == 'on'
         insurance = request.POST.get('insurance', '') == 'on'
 
