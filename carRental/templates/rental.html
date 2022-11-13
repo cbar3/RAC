@@ -1,5 +1,5 @@
 {% extends 'main.html' %}
-
+{% load static  %}
 {% block content %}
 
 <form class="container">
@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <form action="{% url 'order' pk=carData.pk  %}" method="POST">
+    <form action="{% url 'order' pk=carData.pk  %}" method="POST" id="formRental">
         {% csrf_token %}
         <div class="row">
             <div class="col-12 col-md-6">
@@ -35,7 +35,8 @@
                         <div class="col-7">
                             <div class="UserData">
                                 <label>
-                                    <input class="readOnlyForm" value=" {{current.username}}" readonly name='user'>
+                                    <input class="readOnlyForm" value=" {{ current.costumer.costumerFirstName}}"
+                                           readonly name='user'>
                                 </label></div>
                         </div>
                     </div>
@@ -224,7 +225,8 @@
                         <div class="col-md-4 col-4"></div>
                         <div class="col-md-4  col-4" >
                             <div class="orderButton">
-                                <button type='submit' class="raise">ΚΡΑΤΗΣΗ</button>
+                                <button type='submit' formaction="{% url 'order' pk=carData.pk  %}" formmethod="post"
+                                        value="Κράτηση" class="raise">Κράτηση</button>
                             </div>
                         </div>
                         <div class="col-md-4 col-4"></div>

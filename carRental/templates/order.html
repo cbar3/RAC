@@ -1,10 +1,212 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'main.html' %}
+{% load static  %}
+{% block content %}
+<div class="container posConf">
+    <div class="row">
+        <div class="col-md-6 col-12 borderLeftConf">
+            <div class="row">
+                <div class="col-12">
+                    <div class="infoOrderConf">
+                        Η ενοικίαση μου
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="titleModel">
+                        <i>{{ car.manufacturer }}</i>
+                        <i>{{ car.carModel }}</i>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-8">
+                    <div class="dataConfPic">
+                        <img class="responsiveDataPic" src="{{ car.carImage.url  }}" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-5">
+                    <div class="titleConf">
+                        Εκκίνηση Ενοικίασης:
+                    </div>
+                </div>
+                <div class="col-md-8 col-7">
+                    <div class="dataConf">
+                        <i>{{ place }}</i>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-5">
+                    <div class="titleConf">
+                        Ημέρα παραλαβής:
+                    </div>
+                </div>
+                <div class="col-md-8 col-7">
+                    <div class="dataConf">
+                        <i>{{ startDate }}</i>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-5">
+                    <div class="titleConf">
+                        Ημέρα παράδοσης:
+                    </div>
+                </div>
+                <div class="col-md-8 col-7">
+                    <div class="dataConf">
+                        <i>{{ endDate }}</i>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-5">
+                    <div class="titleConf">
+                        Συνολική τιμή:
+                    </div>
+                </div>
+                <div class="col-md-8 col-7">
+                    <div class="dataConf">
+                        <i>{{ priceTotal }} €</i>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-5">
+                    <div class="titleConf">
+                        Γεμάτο Ρεζερβουάρ:
+                    </div>
+                </div>
+                {% if fuel == True %}
+                <div class="col-md-8 col-7">
+                    <div class="dataConf">
+                        <i>ΝΑΙ</i>
+                    </div>
+                </div>
+                {% else  %}
+                <div class="col-md-8 col-7">
+                    <div class="dataConf">
+                        <i>ΟΧΙ</i>
+                    </div>
+                </div>
+                {% endif  %}
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-5">
+                    <div class="titleConf">
+                        Μικτή Ασφάλεια:
+                    </div>
+                </div>
+                {% if insurance == True %}
+                <div class="col-md-8 col-7">
+                    <div class="dataConf">
+                        <i>ΝΑΙ</i>
+                    </div>
+                </div>
+                {% else  %}
+                    <div class="col-md-8 col-7">
+                        <div class="dataConf">
+                        <i>ΟΧΙ</i>
+                    </div>
+                </div>
+                {% endif  %}
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-5">
+                    <a href="{#% url 'pdfView' pk=currentOrder %#}">
+                        Δείτε την κράτηση σας
+                    </a>
+                </div>
+                <div class="col-md-8 col-7">
+                    <a href="{#% url 'pdfDownload' pk=currentOrder %#}">
+                        Κατεβάστε την κράτηση σας
+                    </a>
+                </div>
+            </div>
+            <div class="borderConf"></div>
+        </div>
+        <div class="col-md-6 col-12 borderRightConf">
+            <div class="row">
+                <div class="col-12">
+                    <div class="infoOrderConf">
+                        Πληρωμή
+                    </div>
+                </div>
+            </div>
+            <div class="posTrans">
+                <div class="row">
+                    <div class="col-12">
+                       <div class="aboutTrans">
+                          <i> Ενημέρωση Ασφαλείας</i>
+                       </div>
+                    </div>
+                </div>  
+                <div class="row">
+                    <div class="col-12">
+                        <div class="textTrans">
+                            Συνιστούμε την πληρωμή με πιστωτική κάρτα
+                        </div>
+                    </div>
+                </div>     
+                <div class="row">
+                    <div class="col-md-12">
+                        <form action="{% url 'payment' pk=currentOrder  %}" method="POST" id="payment-form">
+                                {% csrf_token  %}
+                            <div class="form-row">
+                                <div class="row">
+                                    <div class="col-md-6 col-12">
+                                        <input class=" cardOrderInput"  value="" name='phoneCardAuth' placeholder="Τηλέφωνο">
+                                    </div>
+                                    <div class="col-md-6 col-12">
+                                       
+                                        <input if='email' class=" cardOrderInput" name='emailCardAuth' placeholder="Email">
+                                    </div>
+                                </div>
+                              
+                               
+                               
+                                <div id="card-element">
+                                <!-- A Stripe Element will be inserted here. -->
+                                </div>
+    
+                                <!-- Used to display form errors. -->
+                                <div id="card-errors" role="alert"></div>
+                            </div>
+                            <div class="row posCardButtons">
+                                <div class="col-4">
+                                  
+                                </div>
+                                <div class="col-4">
+                                    
+                                </div>
+                                <div class="col-4">
+                                    <button class="btnCard btnCardPos">Πληρωμή </button>
+                                </div>
+                            </div>
+                            
+                        </form>
+                        <div class="row posCardButtons">
+                            <div class="col-3">
 
-</body>
-</html>
+                            </div>
+                            <div class="col-6">
+                                <a href="{% url 'home'   %}" class="btn btn-sm animated-button thar-three">back to home</a>
+                            </div>
+                            <div class="col-3">
+                             
+                            </div>
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    
+</script>
+{% endblock %}

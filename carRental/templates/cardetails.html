@@ -14,10 +14,9 @@
                         <div class="small mb-1">
                            <h1>{{ cars.manufacturer }}</h1>
                         </div>
-                        <h1><a href="{% url 'rental' pk=cars.pk %}">{{ cars.carModel }}</a></h1>
+                        <h2><a href="{% url 'rental' pk=cars.pk %}">{{ cars.carModel }}</a></h2>
                         <div class="fs-5 mb-5">
-                            <span class="text-decoration-line-through">Απο 45,00 €</span>
-                            <span>Τώρα 40,00 €</span>
+                            <span>Κόστος Ενοικίασης {{ cars.price }} €</span>
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">

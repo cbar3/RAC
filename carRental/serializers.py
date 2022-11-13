@@ -13,13 +13,12 @@ class CarRentalSerializer (serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    companyNames = serializers.PrimaryKeyRelatedField(many=True, queryset=RentalCompany.objects.all())
     car = serializers.PrimaryKeyRelatedField(many=True, queryset=Car.objects.all())
     manufacturer = serializers.PrimaryKeyRelatedField(many=True, queryset=Manufacturer.objects.all())
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'companyNames', 'car']
+        fields = ['id', 'username', 'car', 'manufacturer']
 
 
 class CarSerializer (serializers.ModelSerializer):
@@ -35,7 +34,7 @@ class ManufacturerSerializer (serializers.ModelSerializer):
 
     class Meta:
         model = Car
-        fields = ['id', 'manufacturerName', 'manufacturerLogo', 'owner']
+        fields = ['id', 'manufacturer', 'manufacturerLogo', 'owner']
 
 
 class CostumerSerializer (serializers.ModelSerializer):

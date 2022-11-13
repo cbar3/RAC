@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
-from carRental.models import RentalCompany, Car, Manufacturer, Rental, Costumer, PlaceToStart, Extras
+from carRental.models import RentalCompany, Car, Manufacturer, Rental, Costumer, PlaceToStart, Extras, CanceledOrders
 from carRental.serializers import CarRentalSerializer, CarSerializer, ManufacturerSerializer, RentalSerializer, \
     CostumerSerializer, PlaceToStartSerializer
 from carRental.serializers import UserSerializer
@@ -21,6 +21,7 @@ from json import dumps
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    filter_fields = ('id', 'username', 'car', 'manufacturer', )
 
 
 class UserDetail(generics.RetrieveAPIView):
@@ -36,7 +37,8 @@ class CarCompanyList(generics.ListCreateAPIView):
     serializer_class = CarRentalSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filter_fields = ('Name', 'Address', 'Phone Number', 'Email')
+    filter_fields = ('companyName', 'companyAddress', 'companyPhoneNumber', 'companyEmail', 'owner', 'costumer', 'car',
+                     'placeToStart',)
     search_fields = ('companyName', 'companyAddress', 'companyPhoneNumber', 'companyEmail')
     ordering_fields = ('companyName', 'companyAddress', 'companyPhoneNumber', 'companyEmail')
 
@@ -58,7 +60,8 @@ class CarList(generics.ListCreateAPIView):
     serializer_class = CarSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
-    filter_fields = ('carModel', 'manufacturer', 'type')
+    filter_fields = ('carModel', 'manufacturer', 'type', 'transmission', 'owner', 'price', 'insurance',
+                     'tank')
     search_fields = ('carModel', 'manufacturer', 'type')
 
     def perform_create(self, serializer):
@@ -76,7 +79,7 @@ class ManufacturerList(generics.ListCreateAPIView):
     serializer_class = ManufacturerSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
-    filter_fields = ('manufacturerName',)
+    filter_fields = ('id', 'manufacturerName', 'owner')
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -93,7 +96,7 @@ class CustomerList(generics.ListCreateAPIView):
     serializer_class = CostumerSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
-    filter_fields = ('costumerFirstName', 'costumerLastName', 'costumerEmail', 'costumerPhoneNumber',
+    filter_fields = ('user', 'costumerFirstName', 'costumerLastName', 'costumerEmail', 'costumerPhoneNumber',
                      'costumerAFM')
 
     def perform_create(self, serializer):
@@ -111,8 +114,8 @@ class RentalList(generics.ListCreateAPIView):
     serializer_class = RentalSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
-    filter_fields = ('costumer', 'rentalCompany', 'car', 'startDate', 'finishDate'
-                                                                      'placeToStart')
+    filter_fields = ('costumer', 'id', 'rentalCompany', 'car', 'carId', 'startDate', 'finishDate', 'orderDate',
+                     'placeToStart', 'fullFuel', 'insurance', 'payed')
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -121,7 +124,7 @@ class RentalList(generics.ListCreateAPIView):
 class RentalDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Rental.objects.all()
     serializer_class = RentalSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,]
 
 
 class PlaceToStartList(generics.ListCreateAPIView):
@@ -224,15 +227,23 @@ def user_register(request):
                 )
                 user.first_name = form.cleaned_data['first_name']
                 user.last_name = form.cleaned_data['last_name']
-                user.phone_number = form.cleaned_data['phone_number']
-                user.afm = form.cleaned_data['AFM']
                 user.save()
+
+                costumer = Costumer(user=user,
+                                    costumerFirstName=form.cleaned_data['first_name'],
+                                    costumerLastName=form.cleaned_data['last_name'],
+                                    costumerEmail=form.cleaned_data['email'],
+                                    costumerPhoneNumber=form.cleaned_data['phone_number'],
+                                    costumerAFM=form.cleaned_data['AFM'],
+
+                                    )
+                costumer.save()
 
                 # Login the user
                 login(request, user)
 
                 # redirect to accounts page:
-                return HttpResponseRedirect('registerHome')
+                return HttpResponseRedirect('home')
 
     # No post data availabe, let's just show the page.
     else:
@@ -280,18 +291,21 @@ def createRental(request, pk):
 
 @login_required(login_url='home.html')
 def order(request, pk):
+    #global fuel, place, insurance, priceTotal, currentOrder, current
     car = Car.objects.get(id=pk)
-    startDate = request.POST['startDate']
-    endDate = request.POST['endDate']
-    current = request.user
+    if request.method == 'POST':
+        startDate = request.POST['startDate']
+        endDate = request.POST['endDate']
+        current = request.user
 
-    format = "%Y/%m/%d"
+    format = "%m/%d/%Y"
     if (request.method == 'POST' and endDate > startDate):
+
         additions = 0
         priceOfAddi = Extras.objects.last()
-        sdate = datetime.strptime(startDate, format)
-        edate = datetime.strptime(endDate, format)
-        daysTotal = edate - sdate
+        sDate = datetime.strptime(startDate, format)
+        enDate = datetime.strptime(endDate, format)
+        daysTotal = enDate - sDate
         days = int(daysTotal.days)
         place = PlaceToStart.objects.get(id=request.POST['pickUpPlace'])
         fuel = request.POST.get('fuel', '') == 'on'
@@ -305,9 +319,9 @@ def order(request, pk):
             additions = priceOfAddi.insurance
         priceTotal = (int(car.price) * days + additions)
 
-        addingToBase = Order(customer=current, customerID=current.id, carModel=car.model, automobileId=car.id,
-                             price=priceTotal, startRent=sdate, endRent=edate, pickUp=place, fullFuel=fuel,
-                             insurance=insurance)
+        addingToBase = Rental(costumer=current.costumer, costumerID=current.id, car=car, carId=car.id,
+                              price=priceTotal, startDate=sDate, finishDate=enDate, placeToStart=place, fullFuel=fuel,
+                              insurance=insurance)
         addingToBase.save()
         currentOrder = addingToBase.id
 
@@ -322,7 +336,7 @@ def order(request, pk):
         'priceTotal': priceTotal,
         'currentOrder': currentOrder,
     }
-    return render(request, 'confir.html', context, )
+    return render(request, 'order.html', context, )
 
 
 @login_required(login_url='home.html')
@@ -330,7 +344,7 @@ def payment(request, pk):
     current = request.user
     phoneAuth = request.POST['phoneCardAuth']
     emailAuth = request.POST['emailCardAuth']
-    databaseOrder = Order.objects.get(id=pk)
+    databaseOrder = Rental.objects.get(id=pk)
     pricePennies = (databaseOrder.price * 100)
 
     if (request.method == 'POST' and phoneAuth == current.customer.phone and emailAuth == current.customer.email):
@@ -355,8 +369,8 @@ def payment(request, pk):
 
 @login_required(login_url='home.html')
 def cancelOrder(request, pk):
-    order = Order.objects.get(id=pk)
-    orderForCancel = canceledOrders(payed=order.payed, customerID=order.customerID, price=order.price,
-                                    automobileId=order.automobileId)
+    order = Rental.objects.get(id=pk)
+    orderForCancel = CanceledOrders(payed=Rental.payed, customerID=order.customerID, price=Rental.price,
+                                    carId=Rental.carId)
     orderForCancel.save()
     order.delete()

@@ -16,6 +16,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('createRental/<str:pk>/', views.createRental, name='createRental'),
     path('order/<str:pk>/', views.order, name='order'),
+    path('payment/<str:pk>/', views.payment, name='payment'),
 
 
     path('carRentalCompany/', views.CarCompanyList.as_view()),

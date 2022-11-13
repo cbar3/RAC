@@ -17,5 +17,7 @@ class RegisterForm(forms.Form):
     AFM = forms.CharField(widget=forms.NumberInput(attrs={'class': 'form-control'}), required=False)
 
     class Meta:
-        model = User
-        fields = ['username', 'email', 'password', 'password_repeat', 'first_name', 'last_name', 'phone_number', 'AFM']
+        model = User, Costumer
+        fields = ['username', 'email', 'first_name', 'last_name', 'phone_number', 'AFM']
+
+
