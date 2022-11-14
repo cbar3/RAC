@@ -67,10 +67,10 @@ class Manufacturer(models.Model):
 
 class Rental(models.Model):
     costumer = models.ForeignKey(Costumer, null=True, on_delete=models.CASCADE)
-    costumerID = models.CharField(max_length=50, null=True)
-    rentalCompany = models.ForeignKey(RentalCompany, null=True, on_delete=models.CASCADE)
+    costumerID = models.IntegerField(null=True, blank=False)
+    rentalCompany = models.ForeignKey(RentalCompany, null=True, on_delete=models.CASCADE, default='1')
     car = models.ForeignKey(Car, null=True, on_delete=models.CASCADE)
-    carId = models.CharField(null=True, max_length=10)
+    carId = models.IntegerField(null=True, blank=False)
     price = models.IntegerField(null=True, blank=False)
     startDate = models.DateField(auto_now_add=False, null=True)
     finishDate = models.DateField(auto_now_add=False, null=True)
@@ -81,7 +81,7 @@ class Rental(models.Model):
     payed = models.BooleanField(null=True, default=False)
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 
 class Extras(models.Model):
