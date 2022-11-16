@@ -1,5 +1,5 @@
 from django.urls import path
-from carRental import views
+from carRental import views, pdfViews
 from rest_framework.urlpatterns import format_suffix_patterns
 from django.conf.urls import include
 from django.conf import settings
@@ -9,15 +9,19 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('carList/', views.carlist, name='carList'),
     path('carDetails/<int:pk>', views.cardetail, name='rental'),
+
     path('login/', views.user_login, name='login'),
     path('login/home', views.home, name='loginHome'),
     path('register/', views.user_register, name='register'),
     path('register/home', views.home, name='registerHome'),
     path('logout/', views.logout_view, name='logout'),
+
     path('createRental/<str:pk>/', views.createRental, name='createRental'),
     path('order/<str:pk>/', views.order, name='order'),
     path('payment/<str:pk>/', views.payment, name='payment'),
 
+    path('pdfView/<str:pk>/', pdfViews.ViewPDF.as_view(), name="pdfView"),
+    path('pdfDownload/<str:pk>/', pdfViews.DownloadPDF.as_view(), name="pdfDownload"),
 
     path('carRentalCompany/', views.CarCompanyList.as_view()),
     path('carRentalCompany/<int:pk>', views.CarCompanyDetail.as_view()),

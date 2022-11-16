@@ -16,6 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from datetime import datetime, timedelta, date
 from json import dumps
+import stripe
 
 
 class UserList(generics.ListAPIView):
@@ -347,30 +348,30 @@ def payment(request, pk):
     databaseOrder = Rental.objects.get(id=pk)
     pricePennies = (databaseOrder.price * 100)
 
-    if (request.method == 'POST' and phoneAuth == current.customer.phone and emailAuth == current.customer.email):
+    if (request.method == 'POST' and phoneAuth == current.costumer.costumerPhoneNumber and emailAuth == current.costumer.costumerEmail):
         customer = stripe.Customer.create(
 
-            email=current.customer.email,
-            phone=current.customer.phone,
+            email=current.costumer.costumerEmail,
+            phone=current.costumer.costumerPhoneNumber,
             description=databaseOrder.customerID,
             source=request.POST['stripeToken']
         )
         charge = stripe.Charge.create(
             customer=customer,
             amount=pricePennies,
-            currency='usd',
+            currency='euro',
             description=pk
         )
         context = {}
-        return render(request, 'succes.html', context, )
+        return render(request, 'success.html', context, )
     else:
-        return redirect('confir.html')
+        return redirect('order.html')
 
 
 @login_required(login_url='home.html')
 def cancelOrder(request, pk):
     order = Rental.objects.get(id=pk)
-    orderForCancel = CanceledOrders(payed=Rental.payed, customerID=order.customerID, price=Rental.price,
+    orderForCancel = CanceledOrders(payed=Rental.payed, customerID=Rental.costumerID, price=Rental.price,
                                     carId=Rental.carId)
     orderForCancel.save()
     order.delete()

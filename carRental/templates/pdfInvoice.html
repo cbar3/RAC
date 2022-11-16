@@ -1,0 +1,45 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+
+</head>
+        <body>
+            <div id="header_content">
+                <h3>RENT A CAR</h3>
+            </div>
+
+
+            <!-- HTML Content -->
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-2">
+                        Order Number:
+                    </div>
+                    <div class="col-2">
+                        {{ cleanData.id  }}
+                    </div>
+                    <div class="col-md-2">
+                       customer ID:
+                    </div>
+                    <div class="col-2">
+                        {{ cleanData.costumer}}
+                    </div>
+                    <div class="col-2">
+                        car model:
+                    </div>
+                    <div class="col-2">
+                        {{ cleanData.car  }}
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+            <p><strong>Total:  {{ cleanData.price  }}  &euro; </strong></p>
+        </body>
+</html>

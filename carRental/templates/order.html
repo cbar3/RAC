@@ -116,12 +116,12 @@
             </div>
             <div class="row">
                 <div class="col-md-4 col-5">
-                    <a href="{#% url 'pdfView' pk=currentOrder %#}">
+                    <a href="{% url 'pdfView' pk=currentOrder %}">
                         Δείτε την κράτηση σας
                     </a>
                 </div>
                 <div class="col-md-8 col-7">
-                    <a href="{#% url 'pdfDownload' pk=currentOrder %#}">
+                    <a href="{% url 'pdfDownload' pk=currentOrder %}">
                         Κατεβάστε την κράτηση σας
                     </a>
                 </div>
