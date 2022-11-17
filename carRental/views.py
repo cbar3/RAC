@@ -17,6 +17,9 @@ from django.core.mail import send_mail
 from datetime import datetime, timedelta, date
 from json import dumps
 import stripe
+import itertools
+from django.contrib import messages
+from django.db.models import Count, Sum, Max
 
 
 class UserList(generics.ListAPIView):
@@ -320,7 +323,8 @@ def order(request, pk):
             additions = priceOfAddi.insurance
         priceTotal = (int(car.price) * days + additions)
 
-        addingToBase = Rental(costumer=current.costumer, costumerID=current.id, car=car, carId=car.id,
+        addingToBase = Rental(costumer=current.costumer, costumerID=current.id, customerName=current.costumer.user,
+                              car=car, carId=car.id, carModel=car.carModel,
                               price=priceTotal, startDate=sDate, finishDate=enDate, placeToStart=place, fullFuel=fuel,
                               insurance=insurance)
         addingToBase.save()
@@ -375,3 +379,47 @@ def cancelOrder(request, pk):
                                     carId=Rental.carId)
     orderForCancel.save()
     order.delete()
+
+
+@login_required(login_url='home.html')
+def customerPage(request, pk):
+    current = request.user
+    #costumerData = Costumer.objects.get(pk=user.id)
+    dataHolder = Rental.objects.filter(costumerID=current.id)
+    totalPrice = list(dataHolder.aggregate(Sum('price')).values())[0]
+    orderList = reversed(dataHolder)
+    lastOrder = dataHolder.last()
+    favCar = dataHolder.values('carModel').annotate(car_count=Count('carModel'))
+    if not favCar:
+        favCarList = "Rent something ;)"
+    else:
+        favCarList = list(favCar.aggregate(Max('carModel')).values())
+       # favCarList = favCarList[0].replace("['']", '')
+
+    context = {
+        'current': current,
+        'orderList': orderList,
+        'lastOrder': lastOrder,
+        'totalPrice': totalPrice,
+        'favCarList': favCarList,
+        'dataHolder': dataHolder,
+    }
+    return render(request, 'customer.html', context)
+
+
+@login_required(login_url='home.html')
+def updateView(request):
+    current = request.user
+
+    if request.method == 'POST':
+        updateForm = CustomerUpdate(request.POST, request.FILES, instance=current.customer)
+        if updateForm.is_valid():
+            updateForm.save()
+            return redirect('home')
+    else:
+        updateForm = CustomerUpdate(instance=current.customer)
+    context = {
+        'current': current,
+        'updateForm': updateForm,
+    }
+    return render(request, 'updateCustomer.html', context)

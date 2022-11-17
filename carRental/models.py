@@ -29,6 +29,7 @@ class Costumer(models.Model):
     costumerEmail = models.EmailField(max_length=254, null=False, default='')
     costumerPhoneNumber = PhoneNumberField(null=False, blank=False, unique=True)
     costumerAFM = models.IntegerField(null=False, default='')
+    profilePic = models.ImageField(default="avatar-g90d8d966e_640.png", null=True, blank=True)
 
     def __str__(self):
         return self.costumerFirstName
@@ -67,9 +68,11 @@ class Manufacturer(models.Model):
 
 class Rental(models.Model):
     costumer = models.ForeignKey(Costumer, null=True, on_delete=models.CASCADE)
+    customerName = models.CharField(max_length=70, null=True)
     costumerID = models.IntegerField(null=True, blank=False)
     rentalCompany = models.ForeignKey(RentalCompany, null=True, on_delete=models.CASCADE, default='1')
     car = models.ForeignKey(Car, null=True, on_delete=models.CASCADE)
+    carModel = models.CharField(max_length=70, null=True)
     carId = models.IntegerField(null=True, blank=False)
     price = models.IntegerField(null=True, blank=False)
     startDate = models.DateField(auto_now_add=False, null=True)
