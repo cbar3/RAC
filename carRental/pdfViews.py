@@ -33,13 +33,11 @@ def render_to_pdf(template_src, context_dict={}):
 # Opens up page as PDF
 class ViewPDF(View):
     def get(self, request, pk, *args, **kwargs):
-        current = request.user
         rawData = Rental.objects.get(id=pk)
         cleanData = to_dict(rawData)
-        data = to_dict(current)
+
         context = {
             'cleanData': cleanData,
-            'data': data
         }
         pdf = render_to_pdf('pdfInvoice.html', context)
 
@@ -52,7 +50,6 @@ class DownloadPDF(View):
         current = request.user
         rawData = Rental.objects.get(id=pk)
         cleanData = to_dict(rawData)
-        data = to_dict(current)
 
         pdf = render_to_pdf('pdfInvoice.html', cleanData)
 
