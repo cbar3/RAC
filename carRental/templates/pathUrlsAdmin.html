@@ -1,0 +1,28 @@
+{% extends 'main.html' %}
+{% block content %}
+    <section class="py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="row gx-4 gx-lg-5 align-items-center">
+                    <div class="col-md-6">
+                        <a href="{% url 'admin:index' %}" >Admin site</a><br>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'Car_Rental_Company' %}">Car Rental Company</a><br>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'Manufacturer' %}" >Manufacturer</a><br>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'Costumer' %}" >Costumer</a><br>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'PlaceToStart' %}" >Place to Start</a><br>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'carviewlist' %}" >Car List</a><br>
+                    </div>
+                </div>
+            </div>
+    </section>
+{% endblock %}
+

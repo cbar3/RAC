@@ -5,6 +5,7 @@ from django.conf.urls import include
 from django.conf import settings
 from django.conf.urls.static import static
 
+
 urlpatterns = [
     path('', views.home, name='home'),
     path('carList/', views.carlist, name='carList'),
@@ -18,6 +19,9 @@ urlpatterns = [
     path('customer/<str:pk>/', views.customerPage, name='customer'),
     path('updateView/', views.updateView, name='updateView'),
 
+    path('AdminTools/', views.adminTools, name='pathUrlsAdmin'),
+    path('totalRentals/', views.totalRentals, name='totalRentals'),
+
     path('createRental/<str:pk>/', views.createRental, name='createRental'),
     path('order/<str:pk>/', views.order, name='order'),
     path('payment/<str:pk>/', views.payment, name='payment'),
@@ -25,19 +29,19 @@ urlpatterns = [
     path('pdfView/<str:pk>/', pdfViews.ViewPDF.as_view(), name="pdfView"),
     path('pdfDownload/<str:pk>/', pdfViews.DownloadPDF.as_view(), name="pdfDownload"),
 
-    path('carRentalCompany/', views.CarCompanyList.as_view()),
+    path('carRentalCompany/', views.CarCompanyList.as_view(), name="Car_Rental_Company"),
     path('carRentalCompany/<int:pk>', views.CarCompanyDetail.as_view()),
-    path('users/', views.UserList.as_view()),
+    path('users/', views.UserList.as_view(), name="users"),
     path('users/<int:pk>/', views.UserDetail.as_view()),
-    path('car/', views.CarList.as_view()),
+    path('car/', views.CarList.as_view(), name="carviewlist"),
     path('car/<int:pk>', views.CarDetail.as_view()),
-    path('carManufacturer/', views.ManufacturerList.as_view()),
+    path('carManufacturer/', views.ManufacturerList.as_view(), name="Manufacturer"),
     path('carManufacturer/<int:pk>', views.ManufacturerDetail.as_view()),
-    path('Rental/', views.RentalList.as_view()),
+    path('Rental/', views.RentalList.as_view(), name="Rental"),
     path('Rental/<int:pk>', views.RentalDetail.as_view()),
-    path('Costumer/', views.CustomerList.as_view()),
+    path('Costumer/', views.CustomerList.as_view(), name="Costumer"),
     path('Costumer/<int:pk>', views.CustomerDetail.as_view()),
-    path('PlaceToStart/', views.PlaceToStartList.as_view()),
+    path('PlaceToStart/', views.PlaceToStartList.as_view(), name="PlaceToStart"),
     path('PlaceToStart/<int:pk>', views.PlaceToStartDetail.as_view()),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)

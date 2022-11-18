@@ -28,23 +28,32 @@
                             <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
                         </button>
                     </form>
-                    {% if user.is_authenticated %}
                         </div>
+                {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ request.user.username}}</a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><a class="dropdown-item" href="{% url 'logout' %}">Έξοδος</a></li>
                                     <li><hr class="dropdown-divider" /></li>
-                                    <li><a class="dropdown-item" href="{% url 'customer' pk=user.id %}">Προφίλ Χρήστη</a></li>
+                                    {% if request.user.is_active %}
+                                        <li><a class="dropdown-item" href="{% url 'customer' pk=user.id %}">Προφίλ Χρήστη</a></li>
+                                    {% endif  %}
+                                    {% if request.user.is_superuser %}
+                                        <li><a class="dropdown-item" href="{% url 'pathUrlsAdmin' %}">Εργαλεία διαχειριστή</a></li>
+                                    {% endif  %}
+                                    {% if request.user.is_staff %}
+                                        <li><a class="dropdown-item" href="{% url 'totalRentals' %}">Ενεργές ενοικιάσεις</a></li>
+                                        <li><a class="dropdown-item" href="{#% url 'customer' pk=user.id %#}">Ακυρωμένες Ενοικιάσεις</a></li>
+                                        <li><a class="dropdown-item" href="{#% url 'customer' pk=user.id %#}">Διαχείριση στόλου</a></li>
+                                    {% endif  %}
                                 </ul>
                         </li>
-                        </div>
-
-                    {% else  %}
+                {% else  %}
                         <div>
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                                 <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Είσοδος</a></li>
                             </ul>
                         </div>
-                    {% endif  %}
+                {% endif  %}
+            </div>
         </nav>

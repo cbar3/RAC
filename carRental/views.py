@@ -384,7 +384,6 @@ def cancelOrder(request, pk):
 @login_required(login_url='home.html')
 def customerPage(request, pk):
     current = request.user
-    #costumerData = Costumer.objects.get(pk=user.id)
     dataHolder = Rental.objects.filter(costumerID=current.id)
     totalPrice = list(dataHolder.aggregate(Sum('price')).values())[0]
     orderList = reversed(dataHolder)
@@ -422,4 +421,31 @@ def updateView(request):
         'current': current,
         'updateForm': updateForm,
     }
-    return render(request, 'updateCustomer.html', context)
+    return render(request, 'updateCostumer.html', context)
+
+
+@login_required(login_url='home.html')
+def adminTools(request):
+    return render(request, 'pathUrlsAdmin.html')
+
+
+@login_required(login_url='home.html')
+def totalRentals(request):
+    current = request.user
+    rentals = Rental.objects.all()
+
+    context = {
+        'current': current,
+        'rentals': rentals,
+    }
+    return render(request, 'totalRentals.html', context)
+
+
+@login_required(login_url='home.html')
+def watchCanceledOrders(request):
+    return render(request, 'watchCanceledOrders.html')
+
+
+@login_required(login_url='home.html')
+def watchFleet(request):
+    return render(request, 'watchFleet.html')
