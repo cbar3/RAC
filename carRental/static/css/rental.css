@@ -92,8 +92,8 @@ input.dateSelect {
   }
 
   .raise {
-    --color: #fcc842;
-    --hover: #fcc842;
+    --color: darkblue;
+    --hover: #425bfc;
   }
 
   button.raise:hover, button.raise:focus {

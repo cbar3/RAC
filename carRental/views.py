@@ -11,7 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
-from .forms import RegisterForm
+from .forms import RegisterForm, CustomerUpdate
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from datetime import datetime, timedelta, date
@@ -320,7 +320,7 @@ def order(request, pk):
         elif 'fuel' in request.POST:
             additions = priceOfAddi.fuel
         elif 'insurance' in request.POST:
-            additions = priceOfAddi.insurance
+            additions = priceOfAddi.insurance * days
         priceTotal = (int(car.price) * days + additions)
 
         addingToBase = Rental(costumer=current.costumer, costumerID=current.id, customerName=current.costumer.user,
@@ -374,11 +374,14 @@ def payment(request, pk):
 
 @login_required(login_url='home.html')
 def cancelOrder(request, pk):
-    order = Rental.objects.get(id=pk)
-    orderForCancel = CanceledOrders(payed=Rental.payed, customerID=Rental.costumerID, price=Rental.price,
-                                    carId=Rental.carId)
+    orderCancel = Rental.objects.get(id=pk)
+    orderForCancel = CanceledOrders(payed=orderCancel.payed, costumerID=orderCancel.costumerID, price=orderCancel.price,
+                                    carId=orderCancel.carId)
+
     orderForCancel.save()
-    order.delete()
+    orderCancel.delete()
+
+    return redirect('home')
 
 
 @login_required(login_url='home.html')
@@ -393,7 +396,7 @@ def customerPage(request, pk):
         favCarList = "Rent something ;)"
     else:
         favCarList = list(favCar.aggregate(Max('carModel')).values())
-       # favCarList = favCarList[0].replace("['']", '')
+        favCarList = favCarList[0].replace("['']", '')
 
     context = {
         'current': current,
@@ -411,12 +414,12 @@ def updateView(request):
     current = request.user
 
     if request.method == 'POST':
-        updateForm = CustomerUpdate(request.POST, request.FILES, instance=current.customer)
+        updateForm = CustomerUpdate(request.POST, request.FILES, instance=current.costumer)
         if updateForm.is_valid():
             updateForm.save()
             return redirect('home')
     else:
-        updateForm = CustomerUpdate(instance=current.customer)
+        updateForm = CustomerUpdate(instance=current.costumer)
     context = {
         'current': current,
         'updateForm': updateForm,

@@ -35,9 +35,9 @@
                         <div class="col-7">
                             <div class="UserData">
                                 <label>
-                                    <input class="readOnlyForm" value=" {{ current.costumer.costumerFirstName}}"
-                                           readonly name='user'>
-                                </label></div>
+                                    <input class="readOnlyForm" value=" {{ current.costumer.costumerFirstName}} {{ current.costumer.costumerLastName}} " readonly name='user'>
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -50,7 +50,7 @@
                             <div class="UserData">
 
                                 <label>
-                                    <input class="readOnlyForm" value="{{ current.email}}" readonly name='mail'>
+                                    <input class="readOnlyForm" value="{{current.email}}" readonly name='mail'>
                                 </label>
                             </div>
                         </div>
@@ -64,7 +64,7 @@
                         <div class="col-7">
                             <div class="UserData">
                                 <label>
-                                    <input class="readOnlyForm" value=" {{ carData.carModel  }}" readonly name='carModel'>
+                                    <input class="readOnlyForm" value="{{ carData.carModel}}" readonly name='carModel'>
                                 </label>
 
                             </div>
@@ -244,6 +244,7 @@
       // we are taking this price in unsafe way because we don't use this data to calculate the price in the backend
     var fuel            = {{priceOfAddi.fuel}};
     var insurance       = {{priceOfAddi.insurance}};
+   // var place           = $('.pickUpPlace').text();
   
 
     $('.dateSelect').datepicker({
@@ -254,6 +255,7 @@
     });
     $('.dateSelect').datepicker()
     .on('changeDate', function() {
+
         var startDate   = new Date($(".startDateJq").val());
         var endDate     = new Date($(".endDateJq").val());
         var diffDate    = (endDate  - startDate) / (1000 * 60 * 60 * 24);
@@ -261,13 +263,40 @@
         console.log(days)
         var price       = (currentPrice * days)
         $(".priceTotal").html(price);
+      /*  $(".priceTotal").on('change',function(){
+            var month = startDate.month(); //note this method considers january as 0 and december as 11
+            switch(month){
+            case month >= 9 && month <= 11:
+                $(".priceTotal").html(price);
+                break;
+            case month >= 4 && month <= 8:
+                $(".priceTotal").html(price * 1.20);
+                break;
+            case month >= 0 && month <= 3:
+                $(".priceTotal").html(price * 0.7);
+                break;
+            default:
+                $(".priceTotal").html(price);
+            }
+        });
 
+        $(".priceTotal").on('change',function(){
+           if ( $(".place").is("HOME")){
+               $(".priceTotal").html(price)
+           }else if ( $(".place").is("AIRPORT")){
+               $(".priceTotal").html(price + 100)
+           }else if ( $(".place").is("KTEL")){
+               $(".priceTotal").html(price + 20)
+           }
+        });
+
+         */
         $(".insurance, .fuel").on('change',function(){
             if(  $(".insurance").is(':checked') &&  $(".fuel").is(':checked') ){
-                $(".priceTotal").html(price+insurance+fuel)
+                $(".priceTotal").html(price+insurance*days+fuel)
                 
             }else if(  $(".insurance").is(':checked') &&  !($(".fuel").is('unchecked')) ){
-                $(".priceTotal").html(price+insurance)
+                $(".priceTotal").html(price+insurance*days)
 
             }else if(  !($(".insurance").is('unchecked')) &&  $(".fuel").is(':checked') ){
                 $(".priceTotal").html(price+fuel)

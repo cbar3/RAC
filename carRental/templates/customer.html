@@ -238,10 +238,10 @@
 											<div class="infoTable">
 											{% if x.payed == False %}
 											<div class="payingPc">
-												<a href="{#% url 'cancelOrder' pk=x.id   %#}">Cancel this order</a>
+												<a href="{% url 'cancelOrder' pk=x.id   %}">Cancel this order</a>
 											</div>
 											<div class="payingMobile">
-												<a href="{#% url 'cancelOrder' pk=x.id   %#}">Cancel</a>
+												<a href="{% url 'cancelOrder' pk=x.id   %}">Cancel</a>
 											</div>
 											
 											{% else  %}

@@ -21,3 +21,18 @@ class RegisterForm(forms.Form):
         fields = ['username', 'email', 'first_name', 'last_name', 'phone_number', 'AFM']
 
 
+class CustomerUpdate(forms.ModelForm):
+    class Meta:
+        model = Costumer
+        fields = ['profilePic', 'costumerFirstName', 'costumerLastName', 'costumerEmail', 'costumerPhoneNumber',
+                  'costumerAFM']
+        widgets = {
+
+            'costumerEmail': forms.TextInput(attrs={'class': 'inpBoxCustomer'}),
+            'costumerFirstName': forms.TextInput(attrs={'class': 'inpBoxCustomer'}),
+            'costumerLastName': forms.TextInput(attrs={'class': 'inpBoxCustomer'}),
+            'costumerPhoneNumber': forms.TextInput(attrs={'class': 'inpBoxCustomer'}),
+
+        }
+
+

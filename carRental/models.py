@@ -97,7 +97,7 @@ class Extras(models.Model):
 
 
 class CanceledOrders(models.Model):
-    customerID = models.CharField(max_length=50, null=True)
-    automobileId = models.CharField(null=True, max_length=10)
+    costumerID = models.CharField(max_length=70, null=True)
+    carId = models.CharField(max_length=70, null=True)
     price = models.IntegerField(null=True, blank=False)
     payed = models.BooleanField(null=True, default=False)

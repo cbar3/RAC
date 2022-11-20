@@ -25,6 +25,7 @@ urlpatterns = [
     path('createRental/<str:pk>/', views.createRental, name='createRental'),
     path('order/<str:pk>/', views.order, name='order'),
     path('payment/<str:pk>/', views.payment, name='payment'),
+    path('cancelOrder/<str:pk>/', views.cancelOrder, name='cancelOrder'),
 
     path('pdfView/<str:pk>/', pdfViews.ViewPDF.as_view(), name="pdfView"),
     path('pdfDownload/<str:pk>/', pdfViews.DownloadPDF.as_view(), name="pdfDownload"),

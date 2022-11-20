@@ -1,10 +1,86 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% include 'main.html' %}
+    <div class="wrapperUpdate">
+    </div>
+    <div class="blockUpdate">
+        <div class="exitUpdate">
+            <a class="exitLinkUpdate" href="{% url 'customer' pk=current.id  %}">
+                <i class="exitIconUpdate fas fa-times-circle"></i>
+            </a>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-3">
 
-</body>
-</html>
+                </div>
+                <div class="col-6">
+                    <div class="customerPicture customerPictureUpdate">
+                        <img class="imgCustomer"  src='{{ current.costumer.profilePic.url}}'>
+						
+					</div>
+                </div>
+                <div class="col-3">
+                    
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="experienceTitle updateTitle">
+                        Update your account
+                    </div>
+                </div>
+            </div>
+            <form action="" enctype="multipart/form-data" method="POST" >
+                {% csrf_token  %}
+                <div class="row">
+                    <div class="col-md-6 col-12">
+                        <div class="boxImgUpdate">
+                            {{ updateForm.profilePic  }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-12">
+                        <div class="inputBoxCustomer">
+                            <h6> Όνομα </h6>
+                            {{ updateForm.costumerFirstName  }}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <div class="inputBoxCustomer" >
+                            <h6> Επίθετο </h6>
+                            {{ updateForm.costumerLastName  }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-12">
+                        <div class="inputBoxCustomer">
+                            <h6> Email </h6>
+                            {{ updateForm.costumerEmail  }}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <div class="inputBoxCustomer">
+                            <h6> Τηλέφωνο </h6>
+                            {{ updateForm.costumerPhoneNumber  }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3 ">
+
+                    </div>
+                    <div class="col-6 ">
+                        <div class="submitUpdate">
+                            <button type="submit" class="raise">Submit</button>
+                        </div>
+                    </div>
+                    <div class=" col-3 ">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+   
+    
+        
