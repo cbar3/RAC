@@ -101,3 +101,7 @@ class CanceledOrders(models.Model):
     carId = models.CharField(max_length=70, null=True)
     price = models.IntegerField(null=True, blank=False)
     payed = models.BooleanField(null=True, default=False)
+
+
+class CarToDelete (models.Model):
+    carId = models.CharField(max_length=70, null=True)

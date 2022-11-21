@@ -1,0 +1,87 @@
+{% include 'main.html' %}
+    <div class="wrapperUpdate">
+    </div>
+    <div class="blockUpdate">
+        <div class="exitUpdate">
+            <a class="exitLinkUpdate" href="{% url 'watchFleetProductDetails' pk=cars.pk  %}">
+                <i class="exitIconUpdate fas fa-times-circle"></i>
+            </a>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-3">
+
+                </div>
+                <div class="col-6">
+                    <div class="customerPicture customerPictureUpdate">
+                        <img class="imgCustomer"  src='{{ cars.carImage.url}}'>
+						
+					</div>
+                </div>
+                <div class="col-3">
+                    
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="experienceTitle updateTitle">
+                        Product Update
+                    </div>
+                </div>
+            </div>
+            <form action="" enctype="multipart/form-data" method="POST" >
+                {% csrf_token  %}
+                <div class="row">
+                    <div class="col-md-6 col-12">
+                        <div class="boxImgUpdate">
+                            {{ updateForm.carImage }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-12">
+                        <div class="inputBoxCustomer">
+                            <h6> Μοντέλο </h6>
+                            {{ updateForm.carModel }}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <div class="inputBoxCustomer">
+                            <h6> Τιμή </h6>
+                            {{ updateForm.price  }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-12">
+                        <div class="inputBoxCustomer">
+                            <h6> Τύπος κιβωτίου </h6>
+                            {{ updateForm.transmission  }}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <div class="inputBoxCustomer" >
+                            <h6> Τύπος </h6>
+                            {{ updateForm.type  }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3 ">
+
+                    </div>
+                    <div class="col-6 ">
+
+                        <div class="submitUpdate">
+                            <button type="submit" class="raise">Submit</button>
+                        </div>
+                    </div>
+                    <div class=" col-3 ">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+   
+    
+        

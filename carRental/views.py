@@ -11,7 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
-from .forms import RegisterForm, CustomerUpdate
+from .forms import RegisterForm, CustomerUpdate, ProductUpdate
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from datetime import datetime, timedelta, date
@@ -451,4 +451,39 @@ def watchCanceledOrders(request):
 
 @login_required(login_url='home.html')
 def watchFleet(request):
-    return render(request, 'watchFleet.html')
+    cars = Car.objects.all().order_by('carModel')
+    return render(request, 'watchFleet.html', {'cars': cars})
+
+
+@login_required(login_url='home.html')
+def watchFleetProductDetails(request, pk):
+    cars = get_object_or_404(Car, pk=pk)
+    return render(request, 'watchFleetProductDetails.html', {'cars': cars})
+
+
+@login_required(login_url='home.html')
+def updateProduct(request, pk):
+    cars = get_object_or_404(Car, pk=pk)
+
+    if request.method == 'POST':
+        updateForm = ProductUpdate(request.POST, request.FILES, instance=cars)
+        if updateForm.is_valid():
+            updateForm.save()
+            return redirect('watchFleetProductDetails', pk=cars.pk)
+    else:
+        updateForm = ProductUpdate(instance=cars)
+    context = {
+        'cars': cars,
+        'updateForm': updateForm,
+    }
+    return render(request, 'updateProduct.html', context)
+
+
+@login_required(login_url='home.html')
+def deleteProduct(request, pk):
+    deleteCar = Car.objects.get(id=pk)
+
+    deleteCar.delete()
+
+    return redirect('home')
+

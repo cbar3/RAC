@@ -21,6 +21,10 @@ urlpatterns = [
 
     path('AdminTools/', views.adminTools, name='pathUrlsAdmin'),
     path('totalRentals/', views.totalRentals, name='totalRentals'),
+    path('watchFleet/', views.watchFleet, name='watchFleet'),
+    path('watchFleetProductDetails/<int:pk>', views.watchFleetProductDetails, name='watchFleetProductDetails'),
+    path('updateProduct/<str:pk>', views.updateProduct, name='updateProduct'),
+    path('deleteProduct/<str:pk>/', views.deleteProduct, name='deleteProduct'),
 
     path('createRental/<str:pk>/', views.createRental, name='createRental'),
     path('order/<str:pk>/', views.order, name='order'),

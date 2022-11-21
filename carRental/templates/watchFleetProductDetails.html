@@ -1,0 +1,41 @@
+{% extends 'main.html' %}
+{% load static  %}
+{% block content %}
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<!-- Product section-->
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="row gx-4 gx-lg-5 align-items-center">
+                    <div class="col-md-6">
+                        {% if cars.carImage %} <img class="card-img-top mb-5 mb-md-0" src="{{ cars.carImage.url }}" alt="..." /> {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <div class="small mb-1">
+                           <h1>{{ cars.manufacturer }}</h1>
+                        </div>
+                        <h2><a href="{% url 'watchFleetProductDetails' pk=cars.pk %}">{{ cars.carModel }}</a></h2>
+                        <div class="fs-5 mb-5">
+                            <span>Κόστος Ενοικίασης &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ cars.price }} €</span><br>
+                            <span>Τύπος Αμαξώματος &nbsp;&nbsp;{{ cars.type }} </span><br>
+                            <span>Τύπος Κιβωτίου &nbsp;&nbsp;{{ cars.transmission }} </span>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                                    <div class="buttonCar">
+                                        <a href="{% url 'updateProduct' pk=cars.pk %}" class="btn btn-sm animated-button thar-three">Update product</a>
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="buttonCar">
+                                        <a href="{% url 'deleteProduct' pk=cars.pk %}" class="btn btn-sm animated-button thar-three">Delete Product</a>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endblock %}
