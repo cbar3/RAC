@@ -25,6 +25,7 @@ urlpatterns = [
     path('watchFleetProductDetails/<int:pk>', views.watchFleetProductDetails, name='watchFleetProductDetails'),
     path('updateProduct/<str:pk>', views.updateProduct, name='updateProduct'),
     path('deleteProduct/<str:pk>/', views.deleteProduct, name='deleteProduct'),
+    path('addCar/', views.addCar, name='addCar'),
 
     path('createRental/<str:pk>/', views.createRental, name='createRental'),
     path('order/<str:pk>/', views.order, name='order'),

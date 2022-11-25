@@ -1,0 +1,72 @@
+{% extends "main.html" %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <form action="{% url 'addCar' %}" method="post">
+            {% csrf_token %}
+            <div class="col-md-8 col-md-offset-2">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Προσθήκη Οχήματος</div>
+                    <div class="panel-body">
+                        {% if error_message %}
+                            <p class="bg-danger p-d ml-b">{{ error_message }}</p>
+                        {% endif %}
+
+                        <div class="form-group clearfix">
+                            <label for="{{ form.carModel.id_for_label }}" class="col-md-4 control-label text-right">Μοντέλο Οχήματος<span class="text-red"></span> : </label>
+                            <div class="col-md-6">
+                                {{ form.carModel }}
+                            </div>
+                        </div>
+                        <div class="form-group clearfix">
+                            <label for="{{ form.type.id_for_label }}" class="col-md-4 control-label text-right">Τύπος Οχήματος<span class="text-red"></span> : </label>
+                            <div class="col-md-6">
+                                {{ form.type }}
+                            </div>
+                        </div>
+                        <div class="form-group clearfix">
+                            <label for="{{ form.transmission.id_for_label }}" class="col-md-4 control-label text-right">Τύπος κιβωτίο<span class="text-red"></span> :</label>
+                            <div class="col-md-6">
+                                {{ form.transmission }}
+                            </div>
+                        </div>
+                        <div class="form-group clearfix">
+                            <label for="{{ form.price.id_for_label }}" class="col-md-4 control-label text-right">Τιμή ενοικίασης ανα ημέρα : </label>
+                            <div class="col-md-6">
+                                {{ form.price }}
+                            </div>
+                        </div>
+                        <div class="form-group clearfix">
+                            <label for="{{ form.insurance.id_for_label }}" class="col-md-4 control-label text-right">Τιμή μικτής ασφάλειας ανα ημέρα : </label>
+                            <div class="col-md-6">
+                                {{ form.insurance }}
+                            </div>
+                        </div>
+                        <div class="form-group clearfix">
+                            <label for="{{ form.tank.id_for_label }}" class="col-md-4 control-label text-right">Τιμή για γεμάτο ντεπόζιτο : </label>
+                            <div class="col-md-6">
+                                {{ form.tank }}
+                            </div>
+                        </div>
+                        <div class="form-group clearfix">
+                            <label for="{{ form.manufacturer.id_for_label }}" class="col-md-4 control-label text-right">Κατασκευαστής : </label>
+                            <div class="col-md-6">
+                                {{ form.manufacturer }}
+                            </div>
+                        </div>
+                        <div class="form-group clearfix">
+                            <label for="{{ form.carImage.id_for_label }}" class="col-md-4 control-label text-right">carImage : </label>
+                            <div class="col-md-6">
+                                {{ form.carImage }}
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-md-offset-4">
+                            <input type="submit" value="Προσθήκη Οχήματος" class="btn btn-success">
+                        </div>
+                    <a href="/"><img src="{% static 'media/six-rent-a-car.jpg' %}" alt="" width="500px"></a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

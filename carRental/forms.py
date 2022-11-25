@@ -2,11 +2,10 @@ from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-from carRental.models import Car, Costumer, RentalCompany, TYPE_CHOICES, TRANSMISSION_CHOICES
+from carRental.models import Car, Costumer, RentalCompany, Manufacturer
 
 
 class RegisterForm(forms.Form):
-
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
@@ -46,9 +45,27 @@ class ProductUpdate(forms.ModelForm):
         fields = ['carModel', 'type', 'transmission', 'carImage', 'price', 'insurance', 'tank']
         widgets = {
             'carModel': forms.TextInput(attrs={'class': 'inpBoxCustomer'}),
-           # 'type': forms.TextInput(attrs={'class': 'inpBoxCustomer'}),
-           # 'transmission': forms.TextInput(attrs={'class': 'inpBoxCustomer'}),
+            # 'type': forms.ChoiceField(attrs={'class': 'inpBoxCustomer'}),
+            # 'transmission': forms.ChoiceField(attrs={'class': 'inpBoxCustomer'}),
             'price': forms.TextInput(attrs={'class': 'inpBoxCustomer'}),
             'insurance': forms.TextInput(attrs={'class': 'inpBoxCustomer'}),
             'tank': forms.TextInput(attrs={'class': 'inpBoxCustomer'}),
+        }
+
+
+class AddCarForm(forms.ModelForm):
+
+    class Meta:
+        model = Car
+        fields = ['carModel', 'manufacturer', 'type', 'transmission', 'carImage', 'price', 'insurance', 'tank']
+        widget = {
+            'carModel': forms.TextInput(attrs={'class': 'form-control'}),
+            # 'type': forms.TextInput(attrs={'class': 'form-control'}),
+            # 'transmission': forms.TextInput(attrs={'class': 'form-control'}),
+            'price': forms.TextInput(attrs={'class': 'form-control'}),
+            'insurance': forms.IntegerField(),
+            'tank': forms.IntegerField(),
+            'transmission': forms.ModelMultipleChoiceField(queryset=Car.objects.all()),
+            'type': forms.ModelMultipleChoiceField(queryset=Car.objects.all()),
+            'manufacturer': forms.ModelMultipleChoiceField(queryset=Manufacturer.objects.all()),
         }

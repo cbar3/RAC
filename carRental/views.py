@@ -11,7 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
-from .forms import RegisterForm, CustomerUpdate, ProductUpdate
+from .forms import RegisterForm, CustomerUpdate, ProductUpdate, AddCarForm
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from datetime import datetime, timedelta, date
@@ -25,7 +25,7 @@ from django.db.models import Count, Sum, Max
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    filter_fields = ('id', 'username', 'car', 'manufacturer', )
+    filter_fields = ('id', 'username', 'car', 'manufacturer',)
 
 
 class UserDetail(generics.RetrieveAPIView):
@@ -128,7 +128,7 @@ class RentalList(generics.ListCreateAPIView):
 class RentalDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Rental.objects.all()
     serializer_class = RentalSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly,]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, ]
 
 
 class PlaceToStartList(generics.ListCreateAPIView):
@@ -295,7 +295,7 @@ def createRental(request, pk):
 
 @login_required(login_url='home.html')
 def order(request, pk):
-    #global fuel, place, insurance, priceTotal, currentOrder, current
+    # global fuel, place, insurance, priceTotal, currentOrder, current
     car = Car.objects.get(id=pk)
     if request.method == 'POST':
         startDate = request.POST['startDate']
@@ -352,7 +352,8 @@ def payment(request, pk):
     databaseOrder = Rental.objects.get(id=pk)
     pricePennies = (databaseOrder.price * 100)
 
-    if (request.method == 'POST' and phoneAuth == current.costumer.costumerPhoneNumber and emailAuth == current.costumer.costumerEmail):
+    if (
+            request.method == 'POST' and phoneAuth == current.costumer.costumerPhoneNumber and emailAuth == current.costumer.costumerEmail):
         customer = stripe.Customer.create(
 
             email=current.costumer.costumerEmail,
@@ -487,3 +488,39 @@ def deleteProduct(request, pk):
 
     return redirect('home')
 
+
+def addCar(request):
+    template = 'addCar.html'
+
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = AddCarForm(request.POST, request.FILES)
+        # check whether it's valid:
+        if form.is_valid():
+            if Car.objects.filter(carModel=form.cleaned_data['carModel']).exists():
+                return render(request, template, {
+                    'form': form,
+                    'error_message': 'Car Model already exists.'
+                })
+            else:
+                # Create the car:
+                car = Car.objects.create(
+                   form.cleaned_data['carModel'],
+                   form.cleaned_data['manufacturer'],
+                   form.cleaned_data['type'],
+                   form.cleaned_data['transmission'],
+                   form.cleaned_data['price'],
+                   form.cleaned_data['insurance'],
+                   form.cleaned_data['tank'],
+                   form.cleaned_data['carImage'],
+                )
+                car.save()
+
+                # redirect to watchFleet page:
+                return HttpResponseRedirect('watchFleet')
+
+    # No post data availabe, let's just show the page.
+    else:
+        form = AddCarForm()
+
+    return render(request, template, {'form': form})
