@@ -40,7 +40,7 @@ class Car (models.Model):
     manufacturer = models.ForeignKey('Manufacturer', null=True, on_delete=models.CASCADE)
     type = models.CharField(choices=TYPE_CHOICES, default='', max_length=15)
     transmission = models.CharField(choices=TRANSMISSION_CHOICES, default='', max_length=15)
-    carImage = models.ImageField(null=True)
+    carImage = models.ImageField(upload_to='images', null=True)
     owner = models.ForeignKey('auth.User', related_name='car', on_delete=models.CASCADE, null=True)
     price = models.CharField(max_length=10, null=True, blank=True)
     insurance = models.IntegerField(null=True, blank=True)

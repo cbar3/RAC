@@ -58,8 +58,13 @@
                                         <a href="{% url 'createRental' pk=cars.id %}" class="btn btn-sm animated-button thar-three">Κάνε κράτηση τώρα</a>
                                     </div>
                                     {% else  %}
+                                        <!--<div class="alert">
+                                            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                                            <strong>Προσοχή!</strong> Για να προχωρήσετε σε κράτηση θα πρέπει πρώτα να πραγματοποιήσετε είσοδο με τα στοιχεία σας
+                                        </div>-->
                                     <div class="buttonCar">
-                                        <a href='' class="btn btn-sm animated-button thar-three">Κανε κρατηση τωρα</a>
+                                        <a  href='' class="btn btn-sm animated-button thar-three" onclick=showAlert()>Κανε κράτηση τώρα</a>
+                                       <!-- <button  href='' class="btn btn-sm animated-button thar-three" onclick="showAlert()">Κανε κράτηση τώρα</button>-->
                                     </div>
                                     {% endif %}
                             </div>
@@ -100,4 +105,11 @@
                 </div>
             </div>
         </section>
+      <script>
+  function showAlert() {
+    var myText = "Προσοχή!Για να προχωρήσετε σε κράτηση θα πρέπει πρώτα να πραγματοποιήσετε είσοδο με τα στοιχεία σας";
+    alert (myText);
+  }
+  </script>
     {% endblock %}
+

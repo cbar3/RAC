@@ -190,6 +190,8 @@ def user_login(request):
             login(request, user)
             # Success, now let's login the user.
             return render(request, 'home.html')
+
+
         else:
             # Incorrect credentials, let's throw an error to the screen.
             return render(request, 'login.html', {'error_message': 'Incorrect username and / or password.'})
@@ -497,29 +499,38 @@ def addCar(request):
         form = AddCarForm(request.POST, request.FILES)
         # check whether it's valid:
         if form.is_valid():
-            if Car.objects.filter(carModel=form.cleaned_data['carModel']).exists():
-                return render(request, template, {
-                    'form': form,
-                    'error_message': 'Car Model already exists.'
-                })
-            else:
-                # Create the car:
-                car = Car.objects.create(
-                   form.cleaned_data['carModel'],
-                   form.cleaned_data['manufacturer'],
-                   form.cleaned_data['type'],
-                   form.cleaned_data['transmission'],
-                   form.cleaned_data['price'],
-                   form.cleaned_data['insurance'],
-                   form.cleaned_data['tank'],
-                   form.cleaned_data['carImage'],
-                )
-                car.save()
+            # if Car.objects.filter(carModel=form.cleaned_data['carModel']).exists():
+            # return render(request, template, {
+            # 'form': form,
+            # 'error_message': 'Car Model already exists.'
+            # })
+            # else:
+            # Create the car:
+            carModel = form.cleaned_data.get("carModel")
+            type = form.cleaned_data.get("type")
+            transmission = form.cleaned_data.get("transmission")
+            price = form.cleaned_data.get("price")
+            insurance = form.cleaned_data.get("insurance")
+            tank = form.cleaned_data.get("tank")
+            manufacturer = form.cleaned_data.get("manufacturer")
+            carImage = form.cleaned_data.get("carImage")
+            car = Car.objects.create(
+                carModel=carModel,
+                manufacturer=manufacturer,
+                type=type,
+                transmission=transmission,
+                price=price,
+                insurance=insurance,
+                tank=tank,
+                carImage=carImage
+            )
+           # car.carImage = form.cleaned_data['carImage']
+            car.save()
 
-                # redirect to watchFleet page:
-                return HttpResponseRedirect('watchFleet')
+            # redirect to watchFleet page:
+            return HttpResponseRedirect('watchFleet')
 
-    # No post data availabe, let's just show the page.
+    # No post data available, let's just show the page.
     else:
         form = AddCarForm()
 

@@ -57,7 +57,7 @@ class AddCarForm(forms.ModelForm):
 
     class Meta:
         model = Car
-        fields = ['carModel', 'manufacturer', 'type', 'transmission', 'carImage', 'price', 'insurance', 'tank']
+        fields = ['carModel', 'manufacturer', 'type', 'transmission', 'price', 'insurance', 'tank', 'carImage']
         widget = {
             'carModel': forms.TextInput(attrs={'class': 'form-control'}),
             # 'type': forms.TextInput(attrs={'class': 'form-control'}),
@@ -68,4 +68,5 @@ class AddCarForm(forms.ModelForm):
             'transmission': forms.ModelMultipleChoiceField(queryset=Car.objects.all()),
             'type': forms.ModelMultipleChoiceField(queryset=Car.objects.all()),
             'manufacturer': forms.ModelMultipleChoiceField(queryset=Manufacturer.objects.all()),
+            'carImage': forms.ImageField()
         }
