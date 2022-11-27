@@ -370,7 +370,7 @@ def payment(request, pk):
             description=pk
         )
         context = {}
-        return render(request, 'success.html', context, )
+        return render(request, 'success.html', )
     else:
         return redirect('order.html')
 
@@ -449,7 +449,16 @@ def totalRentals(request):
 
 @login_required(login_url='home.html')
 def watchCanceledOrders(request):
-    return render(request, 'watchCanceledOrders.html')
+    current = request.user
+    canceledOrders = CanceledOrders.objects.all()
+    rentals = Rental.objects.all()
+
+    context = {
+        'current': current,
+        'canceledOrders': canceledOrders,
+        'rentals': rentals,
+    }
+    return render(request, 'watchCanceledOrders.html', context)
 
 
 @login_required(login_url='home.html')

@@ -1,10 +1,218 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'main.html' %}
 
-</body>
-</html>
+{% load static %}
+
+{% block content %}
+    <div class="lastRent lastRentPos">
+				<div class="row no-gutters">
+					<div class="col-12">
+						<div class="row">
+							<div class="col-12">
+								<div class="experienceTitle">
+									Το ιστορικό των ακυρωμένων ενοικιάσεων
+								</div>
+							</div>
+						</div>
+
+						<div class="row no-gutters">
+                            <div class="col-2">
+                                <div class="headerTable">
+                                    Customer ID:
+                                </div>
+                            </div>
+                            <div class="col-1">
+                                <div class="headerTable infoID">
+                                    Αριθμός παραγγελίας:
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                <div class="headerTable">
+                                    Μοντέλο αυτοκινήτου:
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="headerTable">
+                                    Ακύρωση:
+                                </div>
+							</div>
+
+
+                        </div>
+
+                {% for x in canceledOrders %}
+
+						<div class="row align-items-center">
+							<div class="col-md-12 col-sm-12 clickFaq ">
+								<div class="questionUs rowSize">
+									<div class="row no-gutters ">
+										<div class="col-2">
+											<div class="infoTable ">
+												{{ x.costumerID}}
+											</div>
+										</div>
+										<div class="col-1">
+
+										</div>
+										<div class="col-5">
+											<div class="infoTable">
+											    {{ x.carId }}
+											</div>
+										</div>
+										<div class="col-3">
+											<div class="infoTable">
+											{% if x.payed == False %}
+                                                Unpayed
+											{% else  %}
+											    Payed
+											{% endif  %}
+											</div>
+										</div>
+										<div class="col-1">
+											<div class="infoTable">
+												<i class="fas fa-arrow-circle-down .displayFaq arrowsUS"></i>
+											</div>
+
+										</div>
+									</div>
+								</div>
+                            {% for y in rentals %}
+								<div class="moreInfoCon open">
+									<div class="row no-gutters">
+										<div class="col-8">
+                                            <div class="row no-gutters">
+												<div class="col-8 col-md-6">
+													<div class="addInfo paddingAddInfo">
+														Πελάτης :
+													</div>
+												</div>
+												<div class="col-4 col-md-6">
+													<div class="addInfo">
+														{{ y.customerName }}
+													</div>
+
+												</div>
+											</div>
+                                            <div class="row no-gutters">
+												<div class="col-8 col-md-6">
+													<div class="addInfo paddingAddInfo">
+														Μοντέλο αυτοκινήτου :
+													</div>
+												</div>
+												<div class="col-4 col-md-6">
+													<div class="addInfo">
+														{{ y.carModel }}
+													</div>
+
+												</div>
+											</div>
+											<div class="row no-gutters">
+												<div class="col-8 col-md-6">
+													<div class="addInfo paddingAddInfo">
+														Pick Up Date :
+													</div>
+												</div>
+												<div class="col-4 col-md-6">
+													<div class="addInfo">
+														{{ y.startDate|date:'d/m/y' }}
+													</div>
+
+												</div>
+											</div>
+											<div class="row no-gutters">
+												<div class="col-8  col-md-6">
+													<div class="addInfo paddingAddInfo">
+														Drop Off Date :
+													</div>
+												</div>
+												<div class="col-4  col-md-6">
+													<div class="addInfo">
+														{{ y.finishDate|date:'d/m/y' }}
+													</div>
+
+												</div>
+											</div>
+											<div class="row no-gutters">
+												<div class="col-8  col-md-6">
+													<div class="addInfo paddingAddInfo">
+														Full fuel :
+													</div>
+												</div>
+												<div class="col-4  col-md-6">
+													<div class="addInfo">
+														{{ y.fullFuel }}
+													</div>
+
+												</div>
+											</div>
+											<div class="row no-gutters">
+												<div class="col-8  col-md-6">
+													<div class="addInfo paddingAddInfo">
+														Aditional Insurance :
+													</div>
+												</div>
+												<div class="col-4  col-md-6">
+													<div class="addInfo">
+														{{ y.insurance  }}
+													</div>
+
+												</div>
+											</div>
+											<div class="row no-gutters">
+												<div class="col-8  col-md-6">
+													<div class="addInfo paddingAddInfo">
+														Pick up place :
+													</div>
+												</div>
+												<div class="col-4  col-md-6">
+													<div class="addInfo">
+														{{ y.placeToStart   }}
+													</div>
+
+												</div>
+											</div>
+											<div class="row no-gutters">
+												<div class="col-8  col-md-6">
+													<div class="addInfo paddingAddInfo">
+														Total price :
+													</div>
+												</div>
+												<div class="col-4  col-md-6">
+													<div class="addInfo">
+														{{ y.price  }}
+													</div>
+
+												</div>
+											</div>
+											<div class="row no-gutters">
+												<div class="col-8  col-md-6">
+													<div class="addInfo paddingAddInfo">
+														order ID
+													</div>
+												</div>
+												<div class="col-4  col-md-6">
+													<div class="addInfo">
+														{{ y.id  }}
+													</div>
+
+												</div>
+											</div>
+										</div>
+										<div class="col-4">
+
+										<div class="buttonInvoice">
+											<a class='invoiceLink'href="#">invoice</a>
+										</div>
+
+										</div>
+
+
+									</div>
+								</div>
+							</div>
+						</div>
+                                {% endfor  %}
+                        {% endfor  %}
+					</div>
+				</div>
+			</div>
+{% endblock  %}

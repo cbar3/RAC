@@ -31,6 +31,7 @@
 	    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous"></script>
 	    <script src="https://kit.fontawesome.com/88703e40b7.js"></script>
 	    <script src="https://use.fontawesome.com/e3ec2c4683.js"></script>
+        <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 	{%  include 'navbar.html' %}
@@ -51,4 +52,6 @@
         <!-- Core theme JS-->
         <!--<script src="j{% static '/js/scripts.js' %}"></script>-->
         <script src="{% static '/js/toggle.js' %}"></script>
+        <script src="{% static '/js/checkout.js' %}"></script>
+<       script src="{% static '/js/status.js' %}"></script>
 </html>
