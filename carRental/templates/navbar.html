@@ -43,7 +43,7 @@
                                     {% endif  %}
                                     {% if request.user.is_staff %}
                                         <li><a class="dropdown-item" href="{% url 'totalRentals' %}">Ενεργές ενοικιάσεις</a></li>
-                                        <li><a class="dropdown-item" href="{% url 'watchCanceledOrders' %}">Ακυρωμένες Ενοικιάσεις</a></li>
+                                        <li><a class="dropdown-item" href="{#% url 'customer' pk=user.id %#}">Ακυρωμένες Ενοικιάσεις</a></li>
                                         <li><a class="dropdown-item" href="{% url 'watchFleet' %}">Διαχείριση στόλου</a></li>
                                     {% endif  %}
                                 </ul>

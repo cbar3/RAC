@@ -21,7 +21,6 @@ urlpatterns = [
 
     path('AdminTools/', views.adminTools, name='pathUrlsAdmin'),
     path('totalRentals/', views.totalRentals, name='totalRentals'),
-    path('watchCanceledOrders/', views.watchCanceledOrders, name='watchCanceledOrders'),
     path('watchFleet/', views.watchFleet, name='watchFleet'),
     path('addCar/watchFleet/', views.watchFleet, name='addCar/watchFleet'),
     path('watchFleetProductDetails/<int:pk>', views.watchFleetProductDetails, name='watchFleetProductDetails'),

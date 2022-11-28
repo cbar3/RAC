@@ -12,49 +12,10 @@ const options = {
 const elements = stripe.elements(options);
 
 // Create and mount the Payment Element
-const paymentElement = elements.create('payment', {
-  layout: {
-    type: 'accordion',
-    defaultCollapsed: false,
-    radios: true,
-    spacedAccordionItems: false
-  }
-});
-
-const handleServerResponse = async (response) => {
-  if (response.error) {
-    // Show error from server on payment form
-  } else if (response.requires_action) {
-    // Use Stripe.js to handle the required next action
-    const {
-      error: errorAction,
-      paymentIntent
-    } = await stripe.handleNextAction({
-      clientSecret: response.payment_intent_client_secret
-    });
-
-
-    if (errorAction) {
-      // Show error from Stripe.js in payment form
-    } else {
-      // Actions handled, show success message
-    }
-  } else {
-    // No actions needed, show success message
-  }
-}
-
+const paymentElement = elements.create('payment');
 paymentElement.mount('#payment-element');
 
 const form = document.getElementById('payment-form');
-
-
-paymentElement.mount('#payment-element');
-
-async function handleDiscountCode(code) {
-  const { newAmount } = await applyDiscountCode(code);
-  elements.update({ amount: newAmount });
-}
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
