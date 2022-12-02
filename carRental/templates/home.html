@@ -1,6 +1,73 @@
 {% extends 'main.html' %}
 {% load static  %}
 {% block content %}
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 mt-5">
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <div class="conUserData">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="tileTitle">
+                                Αναζήτηση
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <form type="get" action="." class="container">
+                            <div class="col-5">
+                                <div class="textUserData inputBoxCustomer">
+						            <input type="text" name="txt">
+                                </div>
+                            </div>
+                            <div class="col-7">
+                                <div class="UserData" >
+                                    <input type="submit" class="raise" value="Submit">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="conDateData">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="tileTitle">
+                                Ημερομηνία Ενοικίασης
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="textUserData">
+                                Ημερομηνία Παραλαβής:
+                            </div>
+                        </div>
+                        <div class="col-7">
+
+                            <label>
+                                <input type="text" class="dateSelect startDateJq " required="required" name='startDate' />
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="textUserData">
+                                Ημερομηνία παράδοσης:
+                            </div>
+                        </div>
+                        <div class="col-7">
+                            <label>
+                                <input type="text" class="dateSelect  endDateJq" required="required" name='endDate' />
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
       <!-- Section-->
         <section class="py-5">
             <div class="container px-4 px-lg-5 mt-5">
@@ -31,4 +98,24 @@
                 </div>
             </div>
         </section>
-    {% endblock %}
+<script>
+    var data            = JSON.parse("{{dataClean|escapejs}}");
+    var currentDate     = new Date();
+
+    $('.dateSelect').datepicker({
+        format: 'mm/dd/yyyy',
+        autoClose:true,
+        datesDisabled:data,
+        startDate: currentDate ,
+    });
+    $('.dateSelect').datepicker()
+    .on('changeDate', function() {
+
+        var startDate   = new Date($(".startDateJq").val());
+        var endDate     = new Date($(".endDateJq").val());
+        var diffDate    = (endDate  - startDate) / (1000 * 60 * 60 * 24);
+        var days        = Math.round(diffDate);
+        console.log(days)
+    });
+</script>
+ {% endblock %}

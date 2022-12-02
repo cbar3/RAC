@@ -19,7 +19,7 @@ from json import dumps
 import stripe
 import itertools
 from django.contrib import messages
-from django.db.models import Count, Sum, Max
+from django.db.models import Count, Sum, Max, Q
 
 
 class UserList(generics.ListAPIView):
@@ -149,12 +149,60 @@ class PlaceToStartDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 def home(request):
-    cars = Car.objects.all().order_by('carModel')[:12]
-    return render(request, 'home.html', {'cars': cars})
+    txt = request.GET.get('txt', '')
+    dataHolder = []
+    dataClean = []
+    current = request.user
+    carData = Car.objects.all()
+    pickupPlace = PlaceToStart.objects.all()
+    rawData = Rental.objects.all()
+    priceOfAddi = Extras.objects.last()
+    filter_avail = dict(endDate__date__lte=Rental.finishDate, startDate__date__gte=Rental.startDate)
+    # is_occupied = Rental.objects.filter(**filter_avail, car=Rental.pk)
+    if txt == '':
+        cars = Car.objects.all().order_by('carModel')[:12]
+    else:
+        cars = Car.objects.filter((Q(carModel__contains=txt)
+                                   | Q(transmission__contains=txt)
+                                   | Q(type__contains=txt)
+                                   | Q(manufacturer__manufacturerName__contains=txt)))
+
+
+    # making a list of blocked days for date picker
+
+    for x in rawData:
+        if x.finishDate > datetime.now().date():
+            srtDate = x.startDate
+            endDate = x.finishDate
+            delta = endDate - srtDate
+            dataHolder = [(srtDate + timedelta(days=i)) for i in range(delta.days + 1)]
+
+    dataClean = [x.strftime("%d/%m/%Y") for x in dataHolder]
+    dataClean = dumps(dataClean)
+
+    context = {
+        'cars': cars,
+        'current': current,
+        'carData': carData,
+        'dataClean': dataClean,
+        'pickupPlace': pickupPlace,
+        'priceOfAddi': priceOfAddi
+    }
+
+    return render(request, 'home.html', context)
 
 
 def carlist(request):
-    cars = Car.objects.all().order_by('carModel')
+    txt = request.GET.get('txt', '')
+
+    if txt == '':
+        cars = Car.objects.all().order_by('carModel')
+    else:
+        cars = Car.objects.filter((Q(carModel__contains=txt)
+                                   | Q(transmission__contains=txt)
+                                   | Q(type__contains=txt)
+                                   | Q(manufacturer__manufacturerName__contains=txt)))
+
     return render(request, 'carlist.html', {'cars': cars})
 
 

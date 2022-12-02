@@ -3,6 +3,32 @@
 {% block content %}
       <!-- Section-->
         <section class="py-5">
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <div class="conUserData">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="tileTitle">
+                                Αναζήτηση
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <form type="get" action="." class="container">
+                            <div class="col-5">
+                                <div class="textUserData inputBoxCustomer">
+						            <input type="text" name="txt">
+                                </div>
+                            </div>
+                            <div class="col-7">
+                                <div class="UserData" >
+                                    <input type="submit" class="raise" value="Submit">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     {% for car in cars %}
