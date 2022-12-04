@@ -8,8 +8,7 @@ class CarRentalSerializer (serializers.ModelSerializer):
 
     class Meta:
         model = RentalCompany
-        fields = ['id', 'companyName', 'companyAddress', 'companyPhoneNumber', 'companyEmail', 'owner', 'car',
-                  'companyLogo', 'costumer', 'placeToStart']
+        fields = '__all__'
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -18,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'car', 'manufacturer']
+        fields = '__all__'
 
 
 class CarSerializer (serializers.ModelSerializer):
@@ -26,15 +25,15 @@ class CarSerializer (serializers.ModelSerializer):
 
     class Meta:
         model = Car
-        fields = ['id', 'carModel', 'manufacturer', 'type', 'transmission', 'carImage', 'owner']
+        fields = '__all__'
 
 
 class ManufacturerSerializer (serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
 
     class Meta:
-        model = Car
-        fields = ['id', 'manufacturer', 'manufacturerLogo', 'owner']
+        model = Manufacturer
+        fields = '__all__'
 
 
 class CostumerSerializer (serializers.ModelSerializer):
@@ -42,8 +41,7 @@ class CostumerSerializer (serializers.ModelSerializer):
 
     class Meta:
         model = Costumer
-        fields = ['id', 'costumerFirstName', 'costumerLastName', 'costumerEmail', 'costumerPhoneNumber',
-                  'costumerAFM', 'owner']
+        fields = '__all__'
 
 
 class PlaceToStartSerializer (serializers.ModelSerializer):
@@ -51,7 +49,7 @@ class PlaceToStartSerializer (serializers.ModelSerializer):
 
     class Meta:
         model = PlaceToStart
-        fields = ['id', 'placeToStart', 'owner']
+        fields = '__all__'
 
 
 class RentalSerializer (serializers.ModelSerializer):
@@ -59,5 +57,4 @@ class RentalSerializer (serializers.ModelSerializer):
 
     class Meta:
         model = Rental
-        fields = ['id', 'costumer', 'rentalCompany', 'car', 'startDate', 'finishDate', 'placeToStart',
-                  'owner']
+        fields = '__all__'

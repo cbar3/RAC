@@ -2,33 +2,89 @@
 {% load static  %}
 {% block content %}
       <!-- Section-->
-        <section class="py-5">
-        <div class="row">
-            <div class="col-12 col-md-6">
-                <div class="conUserData">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="tileTitle">
-                                Αναζήτηση
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 mt-5">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="conUserData">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="tileTitle">
+                                    Αναζήτηση
+                                </div>
                             </div>
                         </div>
+
+                        <div class="row">
+                            <form type="get" action="." class="container">
+                                <div class="col-5">
+                                    <div class="textUserData inputBoxCustomer">
+                                        <input type="text" name="txt">
+                                    </div>
+                                </div>
+                                <div class="col-7">
+                                    <div class="UserData" >
+                                        <input type="submit" class="raise" value="Αναζήτηση">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div class="row">
-                        <form type="get" action="." class="container">
-                            <div class="col-5">
-                                <div class="textUserData inputBoxCustomer">
-						            <input type="text" name="txt">
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="conDateData">
+                        <form action="{% url 'carList' %}" method="POST" id="formRental">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="tileTitle">
+                                        Ημερομηνία Ενοικίασης
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-7">
-                                <div class="UserData" >
-                                    <input type="submit" class="raise" value="Submit">
+                            <div class="row">
+                                <div class="col-5">
+                                    <div class="textUserData">
+                                        Ημερομηνία Παραλαβής:
+                                    </div>
                                 </div>
+                                <div class="col-7">
+                                    <label>
+                                        <input type="text" class="dateSelect startDateJq " required="required" name='startDate' />
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-5">
+                                    <div class="textUserData">
+                                        Ημερομηνία παράδοσης:
+                                    </div>
+                                </div>
+                                <div class="col-7">
+                                    <label>
+                                        <input type="text" class="dateSelect  endDateJq" required="required" name='endDate' />
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row ">
+                                <div class="col-md-4 col-4"></div>
+                                    <div class="col-md-4  col-4" >
+                                        <div class="orderButton">
+                                            <button type='submit' formaction="{% url 'carList' %}" formmethod="post"
+                                            value="Αναζήτηση" class="raise">Αναζήτηση
+                                            </button>
+                                        </div>
+                                    </div>
+                                <div class="col-md-4 col-4"></div>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
+    <section class="py-5">
+        <div class="row">
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     {% for car in cars %}
@@ -56,5 +112,26 @@
                     </div>{% endfor %}
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
+    <script>
+    var data            = JSON.parse("{{dataClean|escapejs}}");
+    var currentDate     = new Date();
+
+    $('.dateSelect').datepicker({
+        format: 'mm/dd/yyyy',
+        autoClose:true,
+        datesDisabled:data,
+        startDate: currentDate ,
+    });
+    $('.dateSelect').datepicker()
+    .on('changeDate', function() {
+
+        var startDate   = new Date($(".startDateJq").val());
+        var endDate     = new Date($(".endDateJq").val());
+        var diffDate    = (endDate  - startDate) / (1000 * 60 * 60 * 24);
+        var days        = Math.round(diffDate);
+        console.log(days)
+    });
+</script>
     {% endblock %}

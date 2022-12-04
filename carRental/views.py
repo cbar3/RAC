@@ -25,7 +25,9 @@ from django.db.models import Count, Sum, Max, Q
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    filter_fields = ('id', 'username', 'car', 'manufacturer',)
+    filter_fields = '__all__'
+    search_fields = '__all__'
+    ordering_fields = '__all__'
 
 
 class UserDetail(generics.RetrieveAPIView):
@@ -41,10 +43,10 @@ class CarCompanyList(generics.ListCreateAPIView):
     serializer_class = CarRentalSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filter_fields = ('companyName', 'companyAddress', 'companyPhoneNumber', 'companyEmail', 'owner', 'costumer', 'car',
-                     'placeToStart',)
-    search_fields = ('companyName', 'companyAddress', 'companyPhoneNumber', 'companyEmail')
-    ordering_fields = ('companyName', 'companyAddress', 'companyPhoneNumber', 'companyEmail')
+    filter_fields = (
+        'companyName', 'companyAddress', 'companyPhoneNumber', 'companyEmail', 'costumer', 'car', 'placeToStart')
+    search_fields = '__all__'
+    ordering_fields = '__all__'
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -63,10 +65,10 @@ class CarList(generics.ListCreateAPIView):
     queryset = Car.objects.all()
     serializer_class = CarSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
-    filter_fields = ('carModel', 'manufacturer', 'type', 'transmission', 'owner', 'price', 'insurance',
-                     'tank')
-    search_fields = ('carModel', 'manufacturer', 'type')
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_fields = ('carModel', 'manufacturer', 'type', 'transmission', 'owner', 'price', 'insurance', 'tank')
+    search_fields = '__all__'
+    ordering_fields = '__all__'
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -82,8 +84,10 @@ class ManufacturerList(generics.ListCreateAPIView):
     queryset = Manufacturer.objects.all()
     serializer_class = ManufacturerSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
-    filter_fields = ('id', 'manufacturerName', 'owner')
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_fields = ('manufacturerName', 'owner')
+    search_fields = '__all__'
+    ordering_fields = '__all__'
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -99,9 +103,11 @@ class CustomerList(generics.ListCreateAPIView):
     queryset = Costumer.objects.all()
     serializer_class = CostumerSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
-    filter_fields = ('user', 'costumerFirstName', 'costumerLastName', 'costumerEmail', 'costumerPhoneNumber',
-                     'costumerAFM')
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_fields = (
+        'user', 'costumerFirstName', 'costumerLastName', 'costumerEmail', 'costumerPhoneNumber', 'costumerAFM')
+    search_fields = '__all__'
+    ordering_fields = '__all__'
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -117,9 +123,10 @@ class RentalList(generics.ListCreateAPIView):
     queryset = Rental.objects.all()
     serializer_class = RentalSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
-    filter_fields = ('costumer', 'id', 'rentalCompany', 'car', 'carId', 'startDate', 'finishDate', 'orderDate',
-                     'placeToStart', 'fullFuel', 'insurance', 'payed')
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_fields = '__all__'
+    search_fields = '__all__'
+    ordering_fields = '__all__'
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -135,8 +142,10 @@ class PlaceToStartList(generics.ListCreateAPIView):
     queryset = PlaceToStart.objects.all()
     serializer_class = PlaceToStartSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
-    filter_fields = ('placeToStart',)
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_fields = '__all__'
+    search_fields = '__all__'
+    ordering_fields = '__all__'
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -157,6 +166,8 @@ def home(request):
     pickupPlace = PlaceToStart.objects.all()
     rawData = Rental.objects.all()
     priceOfAddi = Extras.objects.last()
+    startDate = request.POST.get('startDate', '') == 'on'
+    finishDate = request.POST.get('finishDate', '') == 'on'
     filter_avail = dict(endDate__date__lte=Rental.finishDate, startDate__date__gte=Rental.startDate)
     # is_occupied = Rental.objects.filter(**filter_avail, car=Rental.pk)
     if txt == '':
@@ -167,7 +178,12 @@ def home(request):
                                    | Q(type__contains=txt)
                                    | Q(manufacturer__manufacturerName__contains=txt)))
 
-
+    if 'startDate' in request.POST and 'finishDate' in request.POST:
+        available_cars = Rental.objects.exclude(
+            startDate__lte=Rental.startDate,
+            finishDate__gte=Rental.finishDate
+        )
+        return available_cars
     # making a list of blocked days for date picker
 
     for x in rawData:
@@ -186,7 +202,9 @@ def home(request):
         'carData': carData,
         'dataClean': dataClean,
         'pickupPlace': pickupPlace,
-        'priceOfAddi': priceOfAddi
+        'priceOfAddi': priceOfAddi,
+        'startDate': startDate,
+        'finishDate': finishDate,
     }
 
     return render(request, 'home.html', context)
@@ -194,6 +212,15 @@ def home(request):
 
 def carlist(request):
     txt = request.GET.get('txt', '')
+    dataHolder = []
+    dataClean = []
+    current = request.user
+    carData = Car.objects.all()
+    pickupPlace = PlaceToStart.objects.all()
+    rawData = Rental.objects.all()
+    priceOfAddi = Extras.objects.last()
+    startDate = request.POST.get('startDate', '') == 'on'
+    finishDate = request.POST.get('finishDate', '') == 'on'
 
     if txt == '':
         cars = Car.objects.all().order_by('carModel')
@@ -203,7 +230,36 @@ def carlist(request):
                                    | Q(type__contains=txt)
                                    | Q(manufacturer__manufacturerName__contains=txt)))
 
-    return render(request, 'carlist.html', {'cars': cars})
+    if startDate == '':
+        avail = Rental.objects.all().order_by('carModel')
+    elif 'startDate' in request.POST and 'finishDate' in request.POST:
+        avail = Rental.objects.exclude((Q(startDate__lte=finishDate)
+                                        | Q(finishDate__gte=startDate)))
+
+    # making a list of blocked days for date picker
+    for x in rawData:
+        if x.finishDate > datetime.now().date():
+            srtDate = x.startDate
+            endDate = x.finishDate
+            delta = endDate - srtDate
+            dataHolder = [(srtDate + timedelta(days=i)) for i in range(delta.days + 1)]
+
+    dataClean = [x.strftime("%d/%m/%Y") for x in dataHolder]
+    dataClean = dumps(dataClean)
+
+    context = {
+        'cars': cars,
+        'current': current,
+        'carData': carData,
+        'dataClean': dataClean,
+        'pickupPlace': pickupPlace,
+        'priceOfAddi': priceOfAddi,
+        'startDate': startDate,
+        'finishDate': finishDate,
+        'avail': avail
+    }
+
+    return render(request, 'carlist.html', context)
 
 
 def cardetail(request, pk):
@@ -553,14 +609,14 @@ def addCar(request):
             else:
                 # Create the car:
                 car = Car.objects.create(
-                   form.cleaned_data['carModel'],
-                   form.cleaned_data['manufacturer'],
-                   form.cleaned_data['type'],
-                   form.cleaned_data['transmission'],
-                   form.cleaned_data['price'],
-                   form.cleaned_data['insurance'],
-                   form.cleaned_data['tank'],
-                   form.cleaned_data['carImage'],
+                    form.cleaned_data['carModel'],
+                    form.cleaned_data['manufacturer'],
+                    form.cleaned_data['type'],
+                    form.cleaned_data['transmission'],
+                    form.cleaned_data['price'],
+                    form.cleaned_data['insurance'],
+                    form.cleaned_data['tank'],
+                    form.cleaned_data['carImage'],
                 )
                 car.save()
 
