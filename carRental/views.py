@@ -20,6 +20,7 @@ import stripe
 import itertools
 from django.contrib import messages
 from django.db.models import Count, Sum, Max, Q
+from carRental.availability import check_availability
 
 
 class UserList(generics.ListAPIView):
@@ -161,15 +162,12 @@ def home(request):
     txt = request.GET.get('txt', '')
     dataHolder = []
     dataClean = []
+    available_cars = []
     current = request.user
     carData = Car.objects.all()
-    pickupPlace = PlaceToStart.objects.all()
     rawData = Rental.objects.all()
     priceOfAddi = Extras.objects.last()
-    startDate = request.POST.get('startDate', '') == 'on'
-    finishDate = request.POST.get('finishDate', '') == 'on'
-    filter_avail = dict(endDate__date__lte=Rental.finishDate, startDate__date__gte=Rental.startDate)
-    # is_occupied = Rental.objects.filter(**filter_avail, car=Rental.pk)
+
     if txt == '':
         cars = Car.objects.all().order_by('carModel')[:12]
     else:
@@ -179,11 +177,11 @@ def home(request):
                                    | Q(manufacturer__manufacturerName__contains=txt)))
 
     if 'startDate' in request.POST and 'finishDate' in request.POST:
-        available_cars = Rental.objects.exclude(
-            startDate__lte=Rental.startDate,
-            finishDate__gte=Rental.finishDate
-        )
-        return available_cars
+        for x in carData:
+            if check_availability(x.car, x.startDate['check_in'], x.finishDate['check_out']):
+                available_cars.append(x.car)
+            if len(available_cars) > 0:
+                cars = available_cars[0]
     # making a list of blocked days for date picker
 
     for x in rawData:
@@ -201,10 +199,6 @@ def home(request):
         'current': current,
         'carData': carData,
         'dataClean': dataClean,
-        'pickupPlace': pickupPlace,
-        'priceOfAddi': priceOfAddi,
-        'startDate': startDate,
-        'finishDate': finishDate,
     }
 
     return render(request, 'home.html', context)
@@ -213,14 +207,12 @@ def home(request):
 def carlist(request):
     txt = request.GET.get('txt', '')
     dataHolder = []
+    available_cars = []
     dataClean = []
     current = request.user
     carData = Car.objects.all()
-    pickupPlace = PlaceToStart.objects.all()
     rawData = Rental.objects.all()
-    priceOfAddi = Extras.objects.last()
-    startDate = request.POST.get('startDate', '') == 'on'
-    finishDate = request.POST.get('finishDate', '') == 'on'
+    # cars = Car.objects.all().order_by('carModel')
 
     if txt == '':
         cars = Car.objects.all().order_by('carModel')
@@ -229,14 +221,31 @@ def carlist(request):
                                    | Q(transmission__contains=txt)
                                    | Q(type__contains=txt)
                                    | Q(manufacturer__manufacturerName__contains=txt)))
+    if 'startDate' in request.POST and 'finishDate' in request.POST:
+        for x in carData:
+            if check_availability(x.car, x.startDate['check_in'], x.finishDate['check_out']):
+                available_cars.append(x.car)
+            if len(available_cars) > 0:
+                cars = available_cars[0]
+    """
+    if request.method == 'POST':
+        startDate = request.POST['startDate']
+        endDate = request.POST['endDate']
+        current = request.user
 
-    if startDate == '':
-        avail = Rental.objects.all().order_by('carModel')
-    elif 'startDate' in request.POST and 'finishDate' in request.POST:
-        avail = Rental.objects.exclude((Q(startDate__lte=finishDate)
-                                        | Q(finishDate__gte=startDate)))
+    format = "%m/%d/%Y"
+    if request.method == 'POST' and endDate > startDate:
 
+        sDate = datetime.strptime(startDate, format)
+        enDate = datetime.strptime(endDate, format)
+        if startDate == '':
+            cars = Rental.objects.all().order_by('carModel')
+        elif 'startDate' in request.POST and 'finishDate' in request.POST:
+            cars = Rental.objects.exclude((Q(startDate__lte=enDate)
+                                           | Q(finishDate__gte=sDate)))
+    """
     # making a list of blocked days for date picker
+
     for x in rawData:
         if x.finishDate > datetime.now().date():
             srtDate = x.startDate
@@ -252,11 +261,6 @@ def carlist(request):
         'current': current,
         'carData': carData,
         'dataClean': dataClean,
-        'pickupPlace': pickupPlace,
-        'priceOfAddi': priceOfAddi,
-        'startDate': startDate,
-        'finishDate': finishDate,
-        'avail': avail
     }
 
     return render(request, 'carlist.html', context)
