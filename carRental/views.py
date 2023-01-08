@@ -206,6 +206,8 @@ def home(request):
 
 def carlist(request):
     txt = request.GET.get('txt', '')
+    #startDate = request.Get.get['startDate', '']
+    #endDate = request.GEt.get['endDate', '']
     dataHolder = []
     available_cars = []
     dataClean = []
@@ -221,13 +223,14 @@ def carlist(request):
                                    | Q(transmission__contains=txt)
                                    | Q(type__contains=txt)
                                    | Q(manufacturer__manufacturerName__contains=txt)))
+    """
     if 'startDate' in request.POST and 'finishDate' in request.POST:
         for x in carData:
             if check_availability(x.car, x.startDate['check_in'], x.finishDate['check_out']):
                 available_cars.append(x.car)
             if len(available_cars) > 0:
                 cars = available_cars[0]
-    """
+        """
     if request.method == 'POST':
         startDate = request.POST['startDate']
         endDate = request.POST['endDate']
@@ -236,14 +239,17 @@ def carlist(request):
     format = "%m/%d/%Y"
     if request.method == 'POST' and endDate > startDate:
 
-        sDate = datetime.strptime(startDate, format)
-        enDate = datetime.strptime(endDate, format)
+        startDate = datetime.strptime(startDate, format)
+        endDate = datetime.strptime(endDate, format)
         if startDate == '':
             cars = Rental.objects.all().order_by('carModel')
-        elif 'startDate' in request.POST and 'finishDate' in request.POST:
-            cars = Rental.objects.exclude((Q(startDate__lte=enDate)
-                                           | Q(finishDate__gte=sDate)))
-    """
+        if 'startDate' in request.POST and 'finishDate' in request.POST:
+            for x in carData:
+                if check_availability(x.car, startDate['check_in'], endDate['check_out']):
+                    available_cars.append(x.car)
+                if len(available_cars) > 0:
+                    cars = available_cars[0]
+
     # making a list of blocked days for date picker
 
     for x in rawData:
