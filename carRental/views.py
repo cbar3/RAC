@@ -160,6 +160,9 @@ class PlaceToStartDetail(generics.RetrieveUpdateDestroyAPIView):
 
 def home(request):
     txt = request.GET.get('txt', '')
+
+    # filterStartDate = request.POST['startDate']
+    # filterEndDate = request.POST['endDate']
     dataHolder = []
     dataClean = []
     available_cars = []
@@ -176,13 +179,40 @@ def home(request):
                                    | Q(type__contains=txt)
                                    | Q(manufacturer__manufacturerName__contains=txt)))
 
-    if 'startDate' in request.POST and 'finishDate' in request.POST:
+    format = "%m/%d/%Y"
+    if request.method == 'POST':
+        filterStartDate = request.POST['startDate']
+        filterEndDate = request.POST['endDate']
+
+        formattedFilterStartDate = datetime.strptime(filterStartDate, format)
+        formattedFilterEndDate = datetime.strptime(filterEndDate, format)
+
+        rentals = Rental.objects.filter(
+            (
+                    Q(startDate__lte=formattedFilterEndDate)
+                    & Q(finishDate__gte=formattedFilterStartDate)
+            ) | (
+                    Q(startDate__lte=formattedFilterEndDate)
+                    & Q(finishDate__gte=formattedFilterStartDate)
+            ))
+
         for x in carData:
-            if check_availability(x.car, x.startDate['check_in'], x.finishDate['check_out']):
-                available_cars.append(x.car)
-            if len(available_cars) > 0:
-                cars = available_cars[0]
-    # making a list of blocked days for date picker
+            available = True
+
+            for y in rentals:
+                if y.carId == x.id:
+                    available = False
+            if available:
+                available_cars.append(x.id)
+
+        carsCopy = []
+
+        for x in carData:
+            if available_cars.__contains__(x.id):
+                carsCopy.append(x)
+
+        cars = carsCopy
+
 
     for x in rawData:
         if x.finishDate > datetime.now().date():
@@ -206,8 +236,8 @@ def home(request):
 
 def carlist(request):
     txt = request.GET.get('txt', '')
-    #startDate = request.Get.get['startDate', '']
-    #endDate = request.GEt.get['endDate', '']
+    # startDate = request.Get.get['startDate', '']
+    # endDate = request.GEt.get['endDate', '']
     dataHolder = []
     available_cars = []
     dataClean = []
