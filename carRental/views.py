@@ -160,9 +160,6 @@ class PlaceToStartDetail(generics.RetrieveUpdateDestroyAPIView):
 
 def home(request):
     txt = request.GET.get('txt', '')
-
-    # filterStartDate = request.POST['startDate']
-    # filterEndDate = request.POST['endDate']
     dataHolder = []
     dataClean = []
     available_cars = []
@@ -212,7 +209,6 @@ def home(request):
                 carsCopy.append(x)
 
         cars = carsCopy
-
 
     for x in rawData:
         if x.finishDate > datetime.now().date():

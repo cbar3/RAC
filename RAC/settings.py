@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'carRental.apps.CarRentalConfig',
     'phonenumber_field',
     'django_filters',
+    'django_extensions',
     # 'advanced_filters',
 ]
 
@@ -131,3 +132,10 @@ EMAIL_HOST = 'localhost'
 EMAIL_PORT = '1025'
 EMAIL_HOST_USER = ''
 EMAIL_USE_TLS = False
+
+GRAPH_MODELS = {
+    'all_applications': True,
+    'graph_models': True,
+}
+
+os.environ["PATH"] += os.pathsep + 'C:/Program Files/Graphviz/bin/'
