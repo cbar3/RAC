@@ -1,3 +1,7 @@
+# Αρχείο views.py, περιέχει όλα τα function που καλούνται απο την εφαρμογή με τη βοήθεια των http requests
+# και http responses.
+# Βιβλιοθήκες και επεκτάσεις πυο χρησιμοποιήθηκαν στο αρχείο views.py
+
 from django.contrib.auth import authenticate, login, logout
 from carRental.models import RentalCompany, Car, Manufacturer, Rental, Costumer, PlaceToStart, Extras, CanceledOrders
 from carRental.serializers import CarRentalSerializer, CarSerializer, ManufacturerSerializer, RentalSerializer, \
@@ -22,6 +26,10 @@ from django.contrib import messages
 from django.db.models import Count, Sum, Max, Q
 from carRental.availability import check_availability
 
+
+# Οι παρακάτω κλάσεις έχουν δημιουργηθεί για τις ανάγκες του rest api framework και ουσιαστικά κάνουν serialize
+# της κλάσεις της βάσης. Επίσης, έχουν μπει κάποια permission ανάλογα με τον χρήστη που συνδέεται στο rest framework,
+# έχουν μπει κάποια φίλτρα και η δυνατότητα αναζήτησης και διάταξης των αποτελεσμάτων.
 
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
@@ -158,6 +166,11 @@ class PlaceToStartDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
+# Το view της αρχικής σελίδας της εφαρμογής (home page), υπάρχει η δυνατότητα αναζήτησης με χρήση text που μπορεί
+# να επιστρέψει αποτελέσματα στην οθόνη ανάλογα με τη λέξη κλειδί που έχει χρησιμοποιηθεί.
+# Δυνατότητα αναζήτησης διαθέσιμου οχήματος με βάση την ημερομηνία που θέλει ο χρήστης να πραγματοποιήσει την ενοικίαση,
+# μας επιστρέφει μόνο τα οχήματα που είναι διαθέσιμα προς ενοικίαση.
+
 def home(request):
     txt = request.GET.get('txt', '')
     dataHolder = []
@@ -230,6 +243,9 @@ def home(request):
     return render(request, 'home.html', context)
 
 
+# Το view της σελίδας όλα τα οχήματα (car list) μας επιστρέφει όλα τα οχήματα που υπάρχουν. Τα φίλτρα εδώ είναι τα ίδια
+# με την αρχική σελίδα.
+
 def carlist(request):
     txt = request.GET.get('txt', '')
     # startDate = request.Get.get['startDate', '']
@@ -298,6 +314,10 @@ def carlist(request):
     return render(request, 'carlist.html', context)
 
 
+# Το view που μας επιστρέφει τη σελίδα με τις λεπτομέρειες για ένα όχημα. Επίσης, ο χρήστης μπορεί να στείλει ένα email
+# στην εταιρία ενοικιάσεων όπου μπορεί να ενημερώνει για την εκδήλωση ενδιαφέροντος που έχει. Τέλος, στο κάτω μέρος της
+# σελίδας εμφανίζονται σχετικά αποτελέσματα με επιπλέον προτεινόμενα οχήματα.
+
 def cardetail(request, pk):
     cars = get_object_or_404(Car, pk=pk)
     carRelated = Car.objects.all().order_by('carModel')[:4]
@@ -309,7 +329,7 @@ def cardetail(request, pk):
             message_name,
             message,
             message_email,
-            ['c.barbas@oustrias.gr'],
+            ['cbarbas82@gmail.com'],
             fail_silently=False
         )
 
@@ -318,23 +338,30 @@ def cardetail(request, pk):
     return render(request, 'cardetails.html', context)
 
 
+# view για τη φόρμα εισόδου του χρήστη στην εφαρμογή
+
 def user_login(request):
     if request.method == 'POST':
+        # Γίνεται επεξεργασία του request αν υπάρχουν, έχουν γίνει POST δεδομένα. Username/ password
         # Process the request if posted data are available
         username = request.POST['username']
         password = request.POST['password']
+        # Έλεγχος αν ο συνδυασμός username και password είναι σωστός
         # Check username and password combination if correct
         user = authenticate(username=username, password=password)
         if user is not None:
+            # Σώζει το session σε cookie για να μπορέσει να πραγματοποιήσει την είσοδο του χρήστη
             # Save session as cookie to login the user
             login(request, user)
             # Success, now let's login the user.
             return render(request, 'home.html')
         else:
+            # Μήνυμα λάθος σε περίπτωση που χρησιμοποιηθούν λάθος στοιχεία εισόδου.
             # Incorrect credentials, let's throw an error to the screen.
             return render(request, 'login.html', {'error_message': 'Incorrect username and / or password.'})
     else:
-        # No post data availabe, let's just show the page to the user.
+        # Όταν δεν έχουν μπει στοιχεία εισόδου στη φόρμα τότε επιστρέφει ξανά τη σελίδα εισόδου με τη φόρμα.
+        # No post data available, let's just show the page to the user.
         return render(request, 'login.html')
 
 

@@ -2,12 +2,16 @@ from django.db import models
 from django.contrib.auth.models import User
 from phonenumber_field.modelfields import PhoneNumberField, PhoneNumber
 
+# Επιλογές που έχουν γίνει χρήση στις κλάσεις
+
 TYPE_CHOICES = [('MINI', 'mini'), ('Medium', 'medium'), ('MID_RANGE', 'mid-range'), ('SEDAN', 'sedan'), ('SUV', 'suv')]
 TRANSMISSION_CHOICES = [('MANUAL', 'manual'), ('AUTOMATIC', 'automatic')]
 PLACE_CHOICES = [('Home', 'home'), ('Airport', 'airport'), ('KTEL', 'ktel')]
 
 
-class RentalCompany (models.Model):
+# Οι κλάσεις που έχουν δημιουργηθεί για τη δημιουργία των πινάκων της βάσης
+
+class RentalCompany(models.Model):
     companyName = models.CharField(max_length=100, blank=True, default='')
     companyAddress = models.CharField(max_length=100, blank=True, default='')
     companyPhoneNumber = PhoneNumberField(null=False, blank=False, unique=True)
@@ -35,7 +39,7 @@ class Costumer(models.Model):
         return self.costumerFirstName
 
 
-class Car (models.Model):
+class Car(models.Model):
     carModel = models.CharField(max_length=100, blank=False, default='')
     manufacturer = models.ForeignKey('Manufacturer', null=True, on_delete=models.CASCADE)
     type = models.CharField(choices=TYPE_CHOICES, default='', max_length=15)
@@ -103,5 +107,5 @@ class CanceledOrders(models.Model):
     payed = models.BooleanField(null=True, default=False)
 
 
-class CarToDelete (models.Model):
+class CarToDelete(models.Model):
     carId = models.CharField(max_length=70, null=True)
