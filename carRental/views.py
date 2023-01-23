@@ -181,6 +181,7 @@ def home(request):
     rawData = Rental.objects.all()
     priceOfAddi = Extras.objects.last()
 
+    # Φίλτρα για τη φόρμα αναζήτησης
     if txt == '':
         cars = Car.objects.all().order_by('carModel')[:12]
     else:
@@ -189,6 +190,8 @@ def home(request):
                                    | Q(type__contains=txt)
                                    | Q(manufacturer__manufacturerName__contains=txt)))
 
+    # Ο έλεγχος που γίνεται για να επιστρέψει μόνο τα διαθέσιμα οχήματα. Ο χρήστης επιλέγει ημερομηνία αναχώρησης
+    # και ημερομηνία επιστροφής και η σελίδα επιστρέφει μόνο τα αποτελέσματα - τα οχήματα που είναι διαθέσιμα.
     format = "%m/%d/%Y"
     if request.method == 'POST':
         filterStartDate = request.POST['startDate']
@@ -197,6 +200,8 @@ def home(request):
         formattedFilterStartDate = datetime.strptime(filterStartDate, format)
         formattedFilterEndDate = datetime.strptime(filterEndDate, format)
 
+        # Φίλτρα ελέγχου για τη διαθεσιμότητα. Σύγκριση της ημερομηνία που επιλέγει ο χρήστης με τις ημερομηνίες των ήδη
+        # νοικιασμένων οχημάτων που είναι αποθηκευμένα στη βάση.
         rentals = Rental.objects.filter(
             (
                     Q(startDate__lte=formattedFilterEndDate)
@@ -206,6 +211,7 @@ def home(request):
                     & Q(finishDate__gte=formattedFilterStartDate)
             ))
 
+        # Αν υπάρχουν διαθέσιμο οχήματα επέστρεψε μια λίστα με τα διαθέσιμα
         for x in carData:
             available = True
 
@@ -223,6 +229,8 @@ def home(request):
 
         cars = carsCopy
 
+    # Δημιουργία μιας λίστας με τις ημερομηνίες που πρέπει να αποκλειστούν απο το datepicker.
+    # Αυτές που δεν είναι διαθέσιμο το όχημα
     for x in rawData:
         if x.finishDate > datetime.now().date():
             srtDate = x.startDate
@@ -248,16 +256,14 @@ def home(request):
 
 def carlist(request):
     txt = request.GET.get('txt', '')
-    # startDate = request.Get.get['startDate', '']
-    # endDate = request.GEt.get['endDate', '']
     dataHolder = []
     available_cars = []
     dataClean = []
     current = request.user
     carData = Car.objects.all()
     rawData = Rental.objects.all()
-    # cars = Car.objects.all().order_by('carModel')
 
+    # Φίλτρα για τη φόρμα αναζήτησης
     if txt == '':
         cars = Car.objects.all().order_by('carModel')
     else:
@@ -265,35 +271,49 @@ def carlist(request):
                                    | Q(transmission__contains=txt)
                                    | Q(type__contains=txt)
                                    | Q(manufacturer__manufacturerName__contains=txt)))
-    """
-    if 'startDate' in request.POST and 'finishDate' in request.POST:
-        for x in carData:
-            if check_availability(x.car, x.startDate['check_in'], x.finishDate['check_out']):
-                available_cars.append(x.car)
-            if len(available_cars) > 0:
-                cars = available_cars[0]
-        """
-    if request.method == 'POST':
-        startDate = request.POST['startDate']
-        endDate = request.POST['endDate']
-        current = request.user
+
+    # Ο έλεγχος που γίνεται για να επιστρέψει μόνο τα διαθέσιμα οχήματα. Ο χρήστης επιλέγει ημερομηνία αναχώρησης
+    # και ημερομηνία επιστροφής και η σελίδα επιστρέφει μόνο τα αποτελέσματα - τα οχήματα που είναι διαθέσιμα.
 
     format = "%m/%d/%Y"
-    if request.method == 'POST' and endDate > startDate:
+    if request.method == 'POST':
+        filterStartDate = request.POST['startDate']
+        filterEndDate = request.POST['endDate']
 
-        startDate = datetime.strptime(startDate, format)
-        endDate = datetime.strptime(endDate, format)
-        if startDate == '':
-            cars = Rental.objects.all().order_by('carModel')
-        if 'startDate' in request.POST and 'finishDate' in request.POST:
-            for x in carData:
-                if check_availability(x.car, startDate['check_in'], endDate['check_out']):
-                    available_cars.append(x.car)
-                if len(available_cars) > 0:
-                    cars = available_cars[0]
+        formattedFilterStartDate = datetime.strptime(filterStartDate, format)
+        formattedFilterEndDate = datetime.strptime(filterEndDate, format)
 
-    # making a list of blocked days for date picker
+        # Φίλτρα ελέγχου για τη διαθεσιμότητα. Σύγκριση της ημερομηνία που επιλέγει ο χρήστης με τις ημερομηνίες των ήδη
+        # νοικιασμένων οχημάτων που είναι αποθηκευμένα στη βάση.
+        rentals = Rental.objects.filter(
+            (
+                    Q(startDate__lte=formattedFilterEndDate)
+                    & Q(finishDate__gte=formattedFilterStartDate)
+            ) | (
+                    Q(startDate__lte=formattedFilterEndDate)
+                    & Q(finishDate__gte=formattedFilterStartDate)
+            ))
 
+        # Αν υπάρχουν διαθέσιμο οχήματα επέστρεψε μια λίστα με τα διαθέσιμα
+        for x in carData:
+            available = True
+
+            for y in rentals:
+                if y.carId == x.id:
+                    available = False
+            if available:
+                available_cars.append(x.id)
+
+        carsCopy = []
+
+        for x in carData:
+            if available_cars.__contains__(x.id):
+                carsCopy.append(x)
+
+        cars = carsCopy
+
+    # Δημιουργία μιας λίστας με τις ημερομηνίες που πρέπει να αποκλειστούν απο το datepicker.
+    # Αυτές που δεν είναι διαθέσιμο το όχημα
     for x in rawData:
         if x.finishDate > datetime.now().date():
             srtDate = x.startDate
@@ -338,59 +358,57 @@ def cardetail(request, pk):
     return render(request, 'cardetails.html', context)
 
 
-# view για τη φόρμα εισόδου του χρήστη στην εφαρμογή
-
 def user_login(request):
+    # view για τη φόρμα εισόδου του χρήστη στην εφαρμογή
     if request.method == 'POST':
         # Γίνεται επεξεργασία του request αν υπάρχουν, έχουν γίνει POST δεδομένα. Username/ password
-        # Process the request if posted data are available
         username = request.POST['username']
         password = request.POST['password']
         # Έλεγχος αν ο συνδυασμός username και password είναι σωστός
-        # Check username and password combination if correct
         user = authenticate(username=username, password=password)
         if user is not None:
             # Σώζει το session σε cookie για να μπορέσει να πραγματοποιήσει την είσοδο του χρήστη
-            # Save session as cookie to login the user
             login(request, user)
-            # Success, now let's login the user.
+            # Επιτυχία εισόδου, επιστροφή στη home page
             return render(request, 'home.html')
         else:
             # Μήνυμα λάθος σε περίπτωση που χρησιμοποιηθούν λάθος στοιχεία εισόδου.
-            # Incorrect credentials, let's throw an error to the screen.
             return render(request, 'login.html', {'error_message': 'Incorrect username and / or password.'})
     else:
         # Όταν δεν έχουν μπει στοιχεία εισόδου στη φόρμα τότε επιστρέφει ξανά τη σελίδα εισόδου με τη φόρμα.
-        # No post data available, let's just show the page to the user.
         return render(request, 'login.html')
 
 
 def user_register(request):
-    # if this is a POST request we need to process the form data
+    # Το view για τη σελίδα της εγγραφής του χρήστη
     template = 'register.html'
-
+    # Έλεγχος αν είναι μέθοδος POST το request και στη συνέχεια να επεξεργαστούν τα στοιχεία της φόρμας
     if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
+        # Δημιουργία ενός στιγμιότυπου της φόρμας το οποίο θα τροφοδοτηθεί με δεδομένα απο το POST request
         form = RegisterForm(request.POST)
-        # check whether it's valid:
+        # Έλεγχος αν η φόρμα είναι έγκυρη
         if form.is_valid():
+            # Έλεγχος αν το username που χρησιμοποιήθηκε υπάρχει στη βάση. Αν έχει ήδη γίνει χρήση απο άλλον χρήστη.
             if User.objects.filter(username=form.cleaned_data['username']).exists():
                 return render(request, template, {
                     'form': form,
                     'error_message': 'Username already exists.'
                 })
+            # Έλεγχος αν το email που χρησιμοποιείται για την εγγραφή υπάρχει ήδη στην βάση.
+            # Αν έχει ήδη γίνει χρήση απο άλλον χρήστη.
             elif User.objects.filter(email=form.cleaned_data['email']).exists():
                 return render(request, template, {
                     'form': form,
                     'error_message': 'Email already exists.'
                 })
+            # Έλεγχος αν το password έχει συμπληρωθεί και στα 2 πεδία που απαιτείται είναι το ίδιο.
             elif form.cleaned_data['password'] != form.cleaned_data['password_repeat']:
                 return render(request, template, {
                     'form': form,
                     'error_message': 'Passwords do not match.'
                 })
             else:
-                # Create the user:
+                # Αν περάσει απο όλους τους ελέγχους τότε δημιούργησε τον χρήστη - πελάτη.
                 user = User.objects.create_user(
                     form.cleaned_data['username'],
                     form.cleaned_data['email'],
@@ -410,13 +428,13 @@ def user_register(request):
                                     )
                 costumer.save()
 
-                # Login the user
+                # Και πλέον κάνε εγγραφή τον χρήστη
                 login(request, user)
 
-                # redirect to accounts page:
+                # μεταφορά στην αρχική σελίδα
                 return HttpResponseRedirect('home')
 
-    # No post data availabe, let's just show the page.
+    # Αν δεν υπάρχουν δεδομένα για POST απλά εμφάνισε την φόρμα
     else:
         form = RegisterForm()
 
@@ -424,12 +442,14 @@ def user_register(request):
 
 
 @login_required(login_url='home.html')
+# Ρουτίνα για έξοδο του χρήστη
 def logout_view(request):
     logout(request)
     return redirect('home')
 
 
 @login_required(login_url='home.html')
+# Το view για τη σελίδα κράτησης του οχήματος
 def createRental(request, pk):
     dataHolder = []
     dataClean = []
@@ -439,7 +459,8 @@ def createRental(request, pk):
     rawData = Rental.objects.filter(carId=pk)
     priceOfAddi = Extras.objects.last()
 
-    # making a list of blocked days for date picker
+    # Δημιουργία μιας λίστας με τις ημερομηνίες που πρέπει να αποκλειστούν απο το datepicker.
+    # Αυτές που δεν είναι διαθέσιμο το όχημα
     for x in rawData:
         if x.finishDate > datetime.now().date():
             srtDate = x.startDate
@@ -461,16 +482,17 @@ def createRental(request, pk):
 
 
 @login_required(login_url='home.html')
+# View για την επιβεβαίωση της κράτησης. Αποθήκευση στη βάση των στοιχείων της κράτησης.
 def order(request, pk):
-    # global fuel, place, insurance, priceTotal, currentOrder, current
     car = Car.objects.get(id=pk)
+    # Επιβεβαίωση αν η μέθοδος του request είναι POST.
     if request.method == 'POST':
         startDate = request.POST['startDate']
         endDate = request.POST['endDate']
         current = request.user
 
     format = "%m/%d/%Y"
-    if (request.method == 'POST' and endDate > startDate):
+    if request.method == 'POST' and endDate > startDate:
 
         additions = 0
         priceOfAddi = Extras.objects.last()
@@ -482,13 +504,16 @@ def order(request, pk):
         fuel = request.POST.get('fuel', '') == 'on'
         insurance = request.POST.get('insurance', '') == 'on'
 
-        if ('fuel' in request.POST and 'insurance' in request.POST):
+        # Υπολογισμός της αξίας της μεταβλητής πρόσθετες υπηρεσίες "additions" ανάλογα με τις επιλογές του χρήστη.
+        if 'fuel' in request.POST and 'insurance' in request.POST:
             additions = priceOfAddi.insurance + priceOfAddi.fuel
         elif 'fuel' in request.POST:
             additions = priceOfAddi.fuel
         elif 'insurance' in request.POST:
             additions = priceOfAddi.insurance * days
         priceTotal = (int(car.price) * days + additions)
+
+        # Αποθήκευση στην βάση των δεδομένων. Δημιουργία της κράτησης
 
         addingToBase = Rental(costumer=current.costumer, costumerID=current.id, customerName=current.costumer.user,
                               car=car, carId=car.id, carModel=car.carModel,
@@ -541,6 +566,7 @@ def payment(request, pk):
 
 
 @login_required(login_url='home.html')
+# Το view για την ακύρωση της κράτησης
 def cancelOrder(request, pk):
     orderCancel = Rental.objects.get(id=pk)
     orderForCancel = CanceledOrders(payed=orderCancel.payed, costumerID=orderCancel.costumerID, price=orderCancel.price,
@@ -553,12 +579,14 @@ def cancelOrder(request, pk):
 
 
 @login_required(login_url='home.html')
+# Το view για το προφίλ του χρήστη
 def customerPage(request, pk):
     current = request.user
     dataHolder = Rental.objects.filter(costumerID=current.id)
     totalPrice = list(dataHolder.aggregate(Sum('price')).values())[0]
     orderList = reversed(dataHolder)
     lastOrder = dataHolder.last()
+    # Εμφανίζει το αγαπημένο όχημα του χρήστη. Αυτό που έχει κάνει κράτηση τις περισσότερες φορές.
     favCar = dataHolder.values('carModel').annotate(car_count=Count('carModel'))
     if not favCar:
         favCarList = "Rent something ;)"
@@ -578,6 +606,8 @@ def customerPage(request, pk):
 
 
 @login_required(login_url='home.html')
+# Το view για την ενημέρωση των στοιχείων του χρήστη. Ο χρήστης με την βοήθεια μιας φόρμας μπορεί να ενημερώσει
+# τη βάση με τα νέα στοιχεία
 def updateView(request):
     current = request.user
 
@@ -601,6 +631,7 @@ def adminTools(request):
 
 
 @login_required(login_url='home.html')
+# Το view της σελίδας που επιστρέφει όλες τις ενοικιάσεις. Μπορεί να τη δεί ο χρήστης υπάλληλος και ο διαχειριστής
 def totalRentals(request):
     current = request.user
     rentals = Rental.objects.all()
@@ -613,23 +644,28 @@ def totalRentals(request):
 
 
 @login_required(login_url='home.html')
+# Το view της σελίδας που επιστρέφει όλες τις ακυρωμένες κρατήσεις. Μπορεί να τη δεί ο χρήστης υπάλληλος και
+# ο διαχειριστής
 def watchCanceledOrders(request):
     return render(request, 'watchCanceledOrders.html')
 
 
 @login_required(login_url='home.html')
+# Το view που επιστρέφει τη σελίδα διαχείρισης του στόλου οχημάτων στον χρήστη υπάλληλο και στον διαχειριστή.
 def watchFleet(request):
     cars = Car.objects.all().order_by('carModel')
     return render(request, 'watchFleet.html', {'cars': cars})
 
 
 @login_required(login_url='home.html')
+# Το view που επιστρέφει τη σελίδα με τις λεπτομέρειες είδους για το κάθε όχημα του στόλου
 def watchFleetProductDetails(request, pk):
     cars = get_object_or_404(Car, pk=pk)
     return render(request, 'watchFleetProductDetails.html', {'cars': cars})
 
 
 @login_required(login_url='home.html')
+# Το view για την σελίδα ενημέρωσης των δεδομένων του οχήματος, αν πρέπει να γίνει κάποια αλλαγή.
 def updateProduct(request, pk):
     cars = get_object_or_404(Car, pk=pk)
 
@@ -648,6 +684,7 @@ def updateProduct(request, pk):
 
 
 @login_required(login_url='home.html')
+# Το view για τη διαγραφή ενός οχήματος απο την βάση.
 def deleteProduct(request, pk):
     deleteCar = Car.objects.get(id=pk)
 
@@ -657,20 +694,22 @@ def deleteProduct(request, pk):
 
 
 def addCar(request):
+    # view για τη δημιουργία - προσθήκη οχήματος στη βάση απο τον χρήστη υπάλληλο και τον διαχειριστή
     template = 'addCar.html'
 
     if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
+        # Δημιουργία ενός στιγμιότυπου της φόρμας το οποίο θα τροφοδοτηθεί με δεδομένα απο το POST request
         form = AddCarForm(request.POST, request.FILES)
-        # check whether it's valid:
+        # Έλεγχος αν η φόρμα είναι έγκυρη
         if form.is_valid():
+            # Έλεγχος αν το μοντέλο του οχήματος υπάρχει ήδη στη βάση.
             if Car.objects.filter(carModel=form.cleaned_data['carModel']).exists():
                 return render(request, template, {
                     'form': form,
                     'error_message': 'Car Model already exists.'
                 })
             else:
-                # Create the car:
+                # Δημιουργία που οχήματος. Αποθήκευση στην βάση
                 car = Car.objects.create(
                     form.cleaned_data['carModel'],
                     form.cleaned_data['manufacturer'],
@@ -683,10 +722,10 @@ def addCar(request):
                 )
                 car.save()
 
-                # redirect to watchFleet page:
+                # Επιστρέφει στη σελίδα διαχείρισης στόλου
                 return HttpResponseRedirect('watchFleet')
 
-    # No post data availabe, let's just show the page.
+    # Αν δεν υπάρχουν δεδομένα για POST απλά εμφάνισε τη φόρμα
     else:
         form = AddCarForm()
 
