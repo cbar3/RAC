@@ -16,7 +16,7 @@
                         </div>
                         <h2><a href="{% url 'rental' pk=cars.pk %}">{{ cars.carModel }}</a></h2>
                         <div class="fs-5 mb-5">
-                            <span>Κόστος Ενοικίασης &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ cars.price }} €</span><br>
+                            <span>Κόστος Ενοικίασης ανά ημέρα&nbsp;&nbsp;&nbsp;{{ cars.price }} €</span><br>
                             <span>Τύπος Αμαξώματος &nbsp;&nbsp;{{ cars.type }} </span><br>
                             <span>Τύπος Κιβωτίου &nbsp;&nbsp;{{ cars.transmission }} </span>
                         </div>
@@ -31,8 +31,7 @@
                                 <form id="contact-form" class="form" action="#" method="POST" role="form">
                                     {% csrf_token  %}
                                     <div class="form-group">
-
-                                        <input type="text" class="form-control"  name="name" placeholder="Όνοματεπώνυμο" tabindex="1" required>
+                                        <input type="text" class="form-control"  name="name" placeholder="Ονοματεπώνυμο" tabindex="1" required>
                                     </div>
                                     <div class="form-group">
 
@@ -53,20 +52,15 @@
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                    {% if user.is_authenticated  %}
+                                {% if user.is_authenticated  %}
                                     <div class="buttonCar">
                                         <a href="{% url 'createRental' pk=cars.id %}" class="btn btn-sm animated-button thar-three">Κάνε κράτηση τώρα</a>
                                     </div>
                                     {% else  %}
-                                        <!--<div class="alert">
-                                            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                                            <strong>Προσοχή!</strong> Για να προχωρήσετε σε κράτηση θα πρέπει πρώτα να πραγματοποιήσετε είσοδο με τα στοιχεία σας
-                                        </div>-->
                                     <div class="buttonCar">
-                                        <a  href='' class="btn btn-sm animated-button thar-three" onclick=showAlert()>Κανε κράτηση τώρα</a>
-                                       <!-- <button  href='' class="btn btn-sm animated-button thar-three" onclick="showAlert()">Κανε κράτηση τώρα</button>-->
+                                        <a  href='' class="btn btn-sm animated-button thar-three" onclick=showAlert()>ΚΑΝΕ ΚΡΑΤΗΣΗ ΤΩΡΑ</a>
                                     </div>
-                                    {% endif %}
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -106,10 +100,10 @@
             </div>
         </section>
       <script>
-  function showAlert() {
-    var myText = "Προσοχή!Για να προχωρήσετε σε κράτηση θα πρέπει πρώτα να πραγματοποιήσετε είσοδο με τα στοιχεία σας";
-    alert (myText);
-  }
-  </script>
-    {% endblock %}
+        function showAlert() {
+            let myText = "Προσοχή!Για να προχωρήσετε σε κράτηση θα πρέπει πρώτα να πραγματοποιήσετε είσοδο με τα στοιχεία σας";
+            alert (myText);
+        }
+      </script>
+{% endblock %}
 

@@ -12,8 +12,10 @@ urlpatterns = [
     path('carDetails/<int:pk>', views.cardetail, name='rental'),
 
     path('login/', views.user_login, name='login'),
+    path('login1/', views.user_login1, name='login1'),
     path('login/home', views.home, name='loginHome'),
     path('register/', views.user_register, name='register'),
+    path('register1/', views.user_register, name='register1'),
     path('register/home', views.home, name='registerHome'),
     path('logout/', views.logout_view, name='logout'),
     path('customer/<str:pk>/', views.customerPage, name='customer'),
@@ -30,6 +32,7 @@ urlpatterns = [
 
     path('createRental/<str:pk>/', views.createRental, name='createRental'),
     path('order/<str:pk>/', views.order, name='order'),
+    path('success/', views.success, name='success'),
     path('payment/<str:pk>/', views.payment, name='payment'),
     path('cancelOrder/<str:pk>/', views.cancelOrder, name='cancelOrder'),
 

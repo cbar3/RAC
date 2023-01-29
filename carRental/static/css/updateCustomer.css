@@ -68,6 +68,10 @@ input.inpBoxCustomer{
     padding-bottom: 8px;
     border-bottom: 2px solid darkblue;
 }
+.bg-danger {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-danger-rgb), var(--bs-bg-opacity)) !important;
+}
 
 @media (min-width:770px){
     .blockUpdate{
@@ -107,5 +111,6 @@ input.inpBoxCustomer{
         padding-top: 0vh !important;
         height: 5vh;
     }
+
 }
 

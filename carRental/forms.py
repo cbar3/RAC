@@ -6,14 +6,14 @@ from carRental.models import Car, Costumer, RentalCompany, Manufacturer
 
 
 class RegisterForm(forms.Form):
-    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    password_repeat = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    first_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    last_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    phone_number = forms.CharField(widget=forms.NumberInput(attrs={'class': 'form-control'}), required=False)
-    AFM = forms.CharField(widget=forms.NumberInput(attrs={'class': 'form-control'}), required=False)
+    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'inpBoxCustomer'}))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'inpBoxCustomer'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'inpBoxCustomer'}))
+    password_repeat = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'inpBoxCustomer'}))
+    first_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'inpBoxCustomer'}))
+    last_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'inpBoxCustomer'}))
+    phone_number = forms.CharField(widget=forms.NumberInput(attrs={'class': 'inpBoxCustomer'}), required=False)
+    AFM = forms.CharField(widget=forms.NumberInput(attrs={'class': 'inpBoxCustomer'}), required=False)
 
     class Meta:
         model = User, Costumer
@@ -45,8 +45,6 @@ class ProductUpdate(forms.ModelForm):
         fields = ['carModel', 'type', 'transmission', 'carImage', 'price', 'insurance', 'tank']
         widgets = {
             'carModel': forms.TextInput(attrs={'class': 'inpBoxCustomer'}),
-            # 'type': forms.ChoiceField(attrs={'class': 'inpBoxCustomer'}),
-            # 'transmission': forms.ChoiceField(attrs={'class': 'inpBoxCustomer'}),
             'price': forms.TextInput(attrs={'class': 'inpBoxCustomer'}),
             'insurance': forms.TextInput(attrs={'class': 'inpBoxCustomer'}),
             'tank': forms.TextInput(attrs={'class': 'inpBoxCustomer'}),
@@ -54,14 +52,11 @@ class ProductUpdate(forms.ModelForm):
 
 
 class AddCarForm(forms.ModelForm):
-
     class Meta:
         model = Car
         fields = ['carModel', 'manufacturer', 'type', 'transmission', 'carImage', 'price', 'insurance', 'tank']
         widget = {
             'carModel': forms.TextInput(attrs={'class': 'form-control'}),
-            # 'type': forms.TextInput(attrs={'class': 'form-control'}),
-            # 'transmission': forms.TextInput(attrs={'class': 'form-control'}),
             'price': forms.TextInput(attrs={'class': 'form-control'}),
             'insurance': forms.IntegerField(),
             'tank': forms.IntegerField(),
@@ -69,3 +64,14 @@ class AddCarForm(forms.ModelForm):
             'type': forms.ModelMultipleChoiceField(queryset=Car.objects.all()),
             'manufacturer': forms.ModelMultipleChoiceField(queryset=Manufacturer.objects.all()),
         }
+
+
+class LoginForm(forms.Form):
+
+    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'inpBoxCustomer'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'inpBoxCustomer'}))
+
+    class Meta:
+        model = User
+        fields = ['username', 'password']
+

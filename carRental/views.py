@@ -15,7 +15,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
-from .forms import RegisterForm, CustomerUpdate, ProductUpdate, AddCarForm
+from .forms import RegisterForm, CustomerUpdate, ProductUpdate, AddCarForm, LoginForm
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from datetime import datetime, timedelta, date
@@ -379,9 +379,34 @@ def user_login(request):
         return render(request, 'login.html')
 
 
+def user_login1(request):
+    # view για τη φόρμα εισόδου του χρήστη στην εφαρμογή
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            # Γίνεται επεξεργασία του request αν υπάρχουν, έχουν γίνει POST δεδομένα. Username/ password
+            username = request.POST['username']
+            password = request.POST['password']
+            # Έλεγχος αν ο συνδυασμός username και password είναι σωστός
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                # Σώζει το session σε cookie για να μπορέσει να πραγματοποιήσει την είσοδο του χρήστη
+                login(request, user)
+                # Επιτυχία εισόδου, επιστροφή στη home page
+                return redirect('home')
+        else:
+            # Μήνυμα λάθος σε περίπτωση που χρησιμοποιηθούν λάθος στοιχεία εισόδου.
+            return render(request, 'login1.html', {'error_message': 'Incorrect username and / or password.'})
+    else:
+        form = LoginForm
+        # Όταν δεν έχουν μπει στοιχεία εισόδου στη φόρμα τότε επιστρέφει ξανά τη σελίδα εισόδου με τη φόρμα.
+    return render(request, 'login1.html', {'loginForm': form})
+
+
 def user_register(request):
     # Το view για τη σελίδα της εγγραφής του χρήστη
-    template = 'register.html'
+    # template = 'register.html'
+    template = 'register1.html'
     # Έλεγχος αν είναι μέθοδος POST το request και στη συνέχεια να επεξεργαστούν τα στοιχεία της φόρμας
     if request.method == 'POST':
         # Δημιουργία ενός στιγμιότυπου της φόρμας το οποίο θα τροφοδοτηθεί με δεδομένα απο το POST request
@@ -390,20 +415,20 @@ def user_register(request):
         if form.is_valid():
             # Έλεγχος αν το username που χρησιμοποιήθηκε υπάρχει στη βάση. Αν έχει ήδη γίνει χρήση απο άλλον χρήστη.
             if User.objects.filter(username=form.cleaned_data['username']).exists():
-                return render(request, template, {
+                return render(request, 'register1.html', {
                     'form': form,
                     'error_message': 'Username already exists.'
                 })
             # Έλεγχος αν το email που χρησιμοποιείται για την εγγραφή υπάρχει ήδη στην βάση.
             # Αν έχει ήδη γίνει χρήση απο άλλον χρήστη.
             elif User.objects.filter(email=form.cleaned_data['email']).exists():
-                return render(request, template, {
+                return render(request, 'register1.html', {
                     'form': form,
                     'error_message': 'Email already exists.'
                 })
             # Έλεγχος αν το password έχει συμπληρωθεί και στα 2 πεδία που απαιτείται είναι το ίδιο.
             elif form.cleaned_data['password'] != form.cleaned_data['password_repeat']:
-                return render(request, template, {
+                return render(request, 'register1.html', {
                     'form': form,
                     'error_message': 'Passwords do not match.'
                 })
@@ -438,7 +463,7 @@ def user_register(request):
     else:
         form = RegisterForm()
 
-    return render(request, template, {'form': form})
+    return render(request, 'register1.html', {'form': form})
 
 
 @login_required(login_url='home.html')
@@ -545,7 +570,8 @@ def payment(request, pk):
     pricePennies = (databaseOrder.price * 100)
 
     if (
-            request.method == 'POST' and phoneAuth == current.costumer.costumerPhoneNumber and emailAuth == current.costumer.costumerEmail):
+            request.method == 'POST' and phoneAuth == current.costumer.costumerPhoneNumber and emailAuth ==
+            current.costumer.costumerEmail):
         customer = stripe.Customer.create(
 
             email=current.costumer.costumerEmail,
@@ -563,6 +589,11 @@ def payment(request, pk):
         return render(request, 'success.html', context, )
     else:
         return redirect('order.html')
+
+
+@login_required(login_url='home.html')
+def success(request):
+    return render(request, 'success.html')
 
 
 @login_required(login_url='home.html')

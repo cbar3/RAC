@@ -1,0 +1,107 @@
+{% include 'main.html' %}
+{% load static %}
+    <div class="wrapperUpdate">
+    </div>
+    <div class="blockUpdate">
+        <div class="exitUpdate">
+            <a class="exitLinkUpdate" href="{% url 'home'%}">
+                <i class="exitIconUpdate fas fa-times-circle"></i>
+            </a>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-3">
+
+                </div>
+                    <div class="col-6">
+                        <div class="text-center text-white">
+                            <a href="/"><img src="{% static 'media/six-rent-a-car.jpg' %}" alt="" width="150 px"></a>
+                        </div>
+                    </div>
+                <div class="col-3">
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="experienceTitle updateTitle">
+                        <h1>Εγγραφή χρήστη</h1>
+                    </div>
+                </div>
+            </div>
+            <form action="{% url 'register1' %}" enctype="multipart/form-data" method="POST" >
+                {% csrf_token  %}
+                {% if error_message %}
+                    <p class="bg-danger p-d ml-b">{{ error_message }}</p>
+                {% endif %}
+                <div class="row">
+                    <div class="col-md-6 col-12">
+                        <div class="inputBoxCustomer">
+                            <h6> Όνομα χρήστη </h6>
+                            {{ form.username }}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <div class="inputBoxCustomer" >
+                            <h6> Email </h6>
+                            {{ form.email }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-12">
+                        <div class="inputBoxCustomer">
+                            <h6> Password </h6>
+                            {{ form.password }}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <div class="inputBoxCustomer">
+                            <h6> Επιβεβαίωση password </h6>
+                            {{ form.password_repeat }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-12">
+                        <div class="inputBoxCustomer">
+                            <h6> Όνομα: </h6>
+                            {{ form.first_name }}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <div class="inputBoxCustomer">
+                            <h6> Επίθετο: </h6>
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-12">
+                        <div class="inputBoxCustomer">
+                            <h6> Τηλέφωνο: </h6>
+                            {{ form.phone_number }}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <div class="inputBoxCustomer">
+                            <h6> ΑΦΜ:</h6>
+                            {{ form.AFM }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3 "></div>
+                    <div class="col-6 ">
+                        <div class="submitUpdate">
+                            <button type="submit" class="raise">Submit</button>
+                        </div>
+                    </div>
+                    <div class=" col-3 "></div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+

@@ -13,7 +13,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Κράτηση</a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="{% url 'carList' %}">Όλα τα οχήματα</a></li>
+                                <li><a class="dropdown-item" href="{#% url 'carList' %#}">Όλα τα οχήματα</a></li>
                                 <li><hr class="dropdown-divider" /></li>
                                 <li><a class="dropdown-item" href="#!">under construction</a></li>
                                 <li><a class="dropdown-item" href="#!">under construction</a></li>
@@ -57,7 +57,13 @@
                 {% else  %}
                         <div>
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                                <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Είσοδος</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'login1' %}">Είσοδος</a></li>
+                                <!--<div class="col-8 ">
+									<div class="buttonOrderPos">
+										<a href="{#% url 'login1' %#}" class="btn btn-sm animated-button thar-three">
+                                            Είσοδος</a>
+									</div>
+								</div>-->
                             </ul>
                         </div>
                 {% endif  %}
