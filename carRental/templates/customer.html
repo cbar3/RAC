@@ -167,7 +167,7 @@
 								</div>
 								<div class="col-8 ">
 									<div class="buttonOrderPos">
-										<a href="{% url 'updateView' %}" class="btn btn-sm animated-button thar-three">Update your profile</a>
+										<a href="{% url 'updateView' %}" class="btn btn-sm animated-button thar-three">ΕΝΗΜΕΡΩΣΗ ΠΡΟΦΙΛ</a>
 									</div>
 								</div>
 								<div class=" col-2 ">
@@ -238,10 +238,10 @@
 											<div class="infoTable">
 											{% if x.payed == False %}
 											<div class="payingPc">
-												<a href="{% url 'cancelOrder' pk=x.id   %}">Cancel this order</a>
+												<a href="{% url 'cancelOrder' pk=x.id   %}">Ακύρωση ενοικίασης</a>
 											</div>
 											<div class="payingMobile">
-												<a href="{% url 'cancelOrder' pk=x.id   %}">Cancel</a>
+												<a href="{% url 'cancelOrder' pk=x.id   %}">Ακύρωση</a>
 											</div>
 											
 											{% else  %}
@@ -354,9 +354,9 @@
 										</div>
 										<div class="col-4">
 											
-										<div class="buttonInvoice">
+										<!--<div class="buttonInvoice">
 											<a class='invoiceLink'href="#">invoice</a>
-										</div>
+										</div>-->
 										 
 										</div>
 									</div>

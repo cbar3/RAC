@@ -1,5 +1,5 @@
 from django.urls import path
-from carRental import views, pdfViews
+from carRental import views, pdfViews, graphViews
 from rest_framework.urlpatterns import format_suffix_patterns
 from django.conf.urls import include
 from django.conf import settings
@@ -53,6 +53,8 @@ urlpatterns = [
     path('Costumer/<int:pk>', views.CustomerDetail.as_view()),
     path('PlaceToStart/', views.PlaceToStartList.as_view(), name="PlaceToStart"),
     path('PlaceToStart/<int:pk>', views.PlaceToStartDetail.as_view()),
+
+    path('graph', graphViews.graph, name="graph"),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)
 

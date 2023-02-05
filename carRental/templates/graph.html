@@ -1,0 +1,194 @@
+{% extends 'main.html' %}
+{% load static  %}
+{% block content %}
+<script>
+    $(document).ready(function(){
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [
+            {% for x in orderedCarsName  %}
+                '{{ x  }}',
+            {% endfor  %}
+
+        ],
+        datasets: [{
+            label: 'Cars',
+            data: [
+            {% for x in orderedCarsQuantity  %}
+                '{{ x  }}',
+            {% endfor  %}
+
+            ],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
+
+
+
+    var income = document.getElementById('dailyIncome').getContext('2d');
+    var dailyIncome = new Chart(income, {
+        type: 'line',
+        data: {
+            labels: [
+                {% for x in dailyDate  %}
+                    '{{ x  }}',
+                {% endfor  %}
+
+            ],
+            datasets: [{
+                label: 'Daily income',
+                data: [
+                {% for x in dailyMoney  %}
+                    '{{ x  }}',
+                {% endfor  %}
+
+                ],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+
+
+
+
+
+    var location = document.getElementById('locationData').getContext('2d');
+    var locationData = new Chart(location, {
+        type: 'polarArea',
+        data: {
+            labels: [
+                {% for x in placeName  %}
+                    '{{ x  }}',
+                {% endfor  %}
+
+            ],
+            datasets: [{
+                label: 'Busiest pickup places',
+                data: [
+                {% for x in placeQuantity  %}
+                    '{{ x  }}',
+                {% endfor  %}
+
+                ],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+
+
+
+
+
+
+    });
+</script>
+
+
+<div class="container-fluid over">
+    <div class="row">
+        <div class="col-md-4 col-12">
+            <canvas id="myChart" width="100%" height="50%"></canvas>
+        </div>
+        <div class="col-md-4">
+            <div class="dashboardTitle">
+                Σέρρες Rent A Car - Στατιστικά
+            </div>
+            <div class="dashboardPic">
+                <img class="dashPic" src="{% static 'media/six-rent-a-car.jpg'  %}">
+            </div>
+        </div>
+        <div class="col-md-4 col-12">
+            <canvas id="dailyIncome" width="100%" height="50%"></canvas>
+        </div>
+    </div>
+     <div class="row">
+        <div class="col-md-4 col-12">
+
+        </div>
+        <div class="col-md-4 col-12">
+            <canvas id="locationData" width="100%" height="50%"></canvas>
+        </div>
+        <div class="col-md-4 col-12">
+
+        </div>
+    </div>
+</div>
+{% endblock  %}
